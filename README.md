@@ -1,6 +1,6 @@
 # Cross-Validation for Time Series with Dependent Errors
 
-**Authors:** Leonardo Cartesegna, Filippo Reina, Dario Liuzzo
+**Authors:** Leonardo Cartesegna, Filippo Reina, Dario Liuzzo   
 **Course:** MATH-517 Statistical Computation and Visualization  
 **Institution:** EPFL
 
