@@ -210,26 +210,6 @@ Synthetic time series are generated with different error models (`Code/utils/err
 - **ARIMA(1,1,1)**: Combined autoregressive and moving average
 - **Seasonal**: Seasonal component with specified period
 
-## Work Division
-
-### Filippo Reina
-- Implemented CV schemes (Block CV, Buffered CV, Walk-Forward Validation)
-- Developed kernel regression and XGBoost model wrappers
-- Conducted experiments on synthetic data with smooth trend and local bump signals
-- Analyzed real-world datasets (Air Quality, Financial Time Series)
-- Wrote sections of the final report (Introduction, Methods, Results, ...)
-
-### Dario Liuzzo
-- Implemented efficient Neighborhood CV (NCV) method for penalized splines with buffered cross-validation
-- Conducted all computational time comparison experiments across CV schemes and regression models
-- Generated all figures and visualizations for the project (simulation results, time complexity analysis, performance comparisons, diagnostic plots)
-- Contributed to the implementation and development of utility functions throughout the codebase
-
-### Leonardo Cartesegna
-- Reviewed the literature to support the theoretical framing and methodological choices
-- Selected the real-world environmental and financial datasets from the UCI Machine Learning Repository and carried out the dataset diagnostics and characterization: stationarity tests via the Augmented Dickey-Fuller (ADF) test (with AIC autolag selection) and dependence assessment by inspecting ACF and PACF
-- Cleaned parts of the codebase to improve readability and maintainability and corrected the final report for clarity and consistency across sections
-
 
 ## License
 
