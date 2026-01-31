@@ -1,0 +1,51 @@
+\section{Discussion}
+\label{sec:discussion}
+
+
+
+
+
+
+\begin{figure*}[t]
+\includegraphics[width=\textwidth]{../Code/figures/triplet_heatmap_comparison.pdf}
+\caption{Median test-set error on synthetic data across experimental conditions. Each panel corresponds to a signal type (Local Bump, Smooth Trend, Nonlinear). Rows indicate the error process (Seasonal, ARIMA, MA(5), AR(1)), and within each row the three groups correspond to regression methods (Kernel, Spline, XGBoost). For each method, the four annotated cells report the median test MSE obtained after selecting the hyperparameter using the indicated CV scheme (Naive randomized $K$-fold, Block $K$-fold, Buffered block, Walk-forward) and refitting on the full training series. Cell color encodes the median test MSE (darker indicates larger error; color scale shown at right).}
+\label{fig:median_test_mse_heatmap}
+\end{figure*}
+
+
+
+
+
+
+This project studied how temporal dependence compromises standard cross-validation (CV) and evaluated several time-aware alternatives across simulation settings and two real datasets. The results provide a coherent empirical picture that aligns closely with the theoretical leakage mechanism developed in Section~\ref{sec:naive_failure} (Claim~\ref{claim:bias}): when errors are autocorrelated, random shuffling places highly correlated neighbors of a validation point in the training set, inducing a positive covariance between the fitted value and the contemporaneous noise term, which in turn reduces the CV residual and leads to optimistic risk estimates.
+
+\subsection{Key Takeaways}
+Four conclusions emerge.
+\begin{enumerate}[(i)]
+  \item \textbf{Naive randomized CV is not reliable for time series with dependent errors}. In the synthetic study, estimated-versus-test risk plots show that naive CV frequently lies above the $45^\circ$ line, indicating underestimation of the true out-of-sample error. This optimistic bias translates directly into poorer generalization: the median test-MSE heatmap (Figure~\ref{fig:median_test_mse_heatmap}) shows multiple settings where naive CV yields substantially larger test error than time-respecting schemes, especially under persistent dependence and for high-capacity learners.
+\item \textbf{The choice of the regression model impacts the effectiveness of CV}. As discussed when talking about risk estimation bias, Figure~\ref{fig:median_test_mse_heatmap} shows that the effects of choosing time-unaware CV schemes has the largest impact on splines regression. Thus,  while choosing the wrong CV scheme when using KDE or XGBoost leads to underestimation of the test error, the choice of the parameter is still sensible for these models. Using time-aware schemes has multiple advantages for all the regression models, but this choice is even more essential for splines.
+\item \textbf{Time-respecting schemes reduce leakage and stabilize model selection}. Block CV improves over naive CV by preserving ordering, and buffered block CV further reduces boundary leakage by explicitly separating training and validation sets by a lag window. Walk-forward validation typically provides the most realistic error estimate when the evaluation target is forward prediction, since it never trains on observations that occur after the validation period.
+\item \textbf{The impact of CV design depends on both dependence structure and signal complexity}. When the signal is very smooth, many hyperparameters produce similar fits and test errors, so differences between schemes can be modest. However, for localized or harder signals, the bias--variance trade-off becomes sharper: overly optimistic schemes tend to overfit correlated noise, while overly conservative schemes can oversmooth and miss localized structure.
+\item \textbf{Computational cost is not a decisive barrier to dependence-aware validation in this setting}.
+The timing heatmap (Figure~\ref{fig:heatmap}) indicates that runtime is dominated by the model class (XGBoost $\gg$ splines $\gtrsim$ kernel), whereas differences among CV schemes are comparatively small at the studied scale. This supports using block/buffered schemes and walk-forward for forecasting, without materially increasing runtime.
+\end{enumerate}
+
+
+
+
+
+\subsection{How the Findings Align with Theory}
+The empirical findings match the theoretical expectations in two ways.
+First, the direction of bias is consistent: for positively correlated errors, naive CV is expected to be downward biased because the training fit remains correlated with validation noise. The estimated-versus-test risk plot and the negative CV bias distributions confirm this mechanism. Second, the remedies behave as our theoretical analysis suggested: by enforcing temporal separation between training and validation indices, block and buffered schemes reduce the magnitude of the covariance term driving the bias. Buffered block CV is particularly effective when the ACF decays slowly or exhibits seasonal spikes, because it removes precisely the lags where dependence is strongest.
+
+
+
+\subsection{Practical Recommendations}
+Based on the combined evidence, we have formulated the following recommendations for choosing the correct CV scheme:
+\begin{enumerate}[(i)]
+    \item \textbf{Avoid randomized CV on time-ordered data.} If the response (or residuals) exhibits autocorrelation, randomized splits will tend to underestimate error and select overly complex models.
+    \item \textbf{Use walk-forward validation for forecasting.} When the test set corresponds to future time periods, walk-forward validation has the most realistic error estimates.
+    \item \textbf{Choose the buffer size using dependence diagnostics.} A practical approach is to select $\ell$ based on the empirical ACF (e.g., the smallest lag where $|\hat\rho(\ell)|$ drops below a threshold), and to ensure $\ell$ is at
+    least the seasonal period when seasonal spikes are present.
+\end{enumerate}
+

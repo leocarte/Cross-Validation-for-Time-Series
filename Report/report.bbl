@@ -1,0 +1,619 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{apa/apasortcite//global/global/global}
+    \entry{arlot2010survey}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=f536a5b1bc63890da21d6091897b1cad}{%
+           family={Arlot},
+           familyi={A\bibinitperiod},
+           given={Sylvain},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3250ac136af0d1776387e11bb5155201}{%
+           family={Celisse},
+           familyi={C\bibinitperiod},
+           given={Alain},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{2}{%
+        {The Institute of Mathematical Statistics}%
+        {the Bernoulli Society}%
+      }
+      \strng{namehash}{0007c88a802241e561514e407cb6dc92}
+      \strng{fullhash}{0007c88a802241e561514e407cb6dc92}
+      \strng{fullhashraw}{0007c88a802241e561514e407cb6dc92}
+      \strng{bibnamehash}{0007c88a802241e561514e407cb6dc92}
+      \strng{authorbibnamehash}{0007c88a802241e561514e407cb6dc92}
+      \strng{authornamehash}{0007c88a802241e561514e407cb6dc92}
+      \strng{authorfullhash}{0007c88a802241e561514e407cb6dc92}
+      \strng{authorfullhashraw}{0007c88a802241e561514e407cb6dc92}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Statistics Surveys}
+      \field{title}{A survey of cross-validation procedures for model selection}
+      \field{volume}{4}
+      \field{year}{2010}
+      \field{pages}{40\bibrangedash 79}
+      \range{pages}{40}
+      \verb{doi}
+      \verb 10.1214/09-SS054
+      \endverb
+    \endentry
+    \entry{BurmanChowNolan1994}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=964847d725eec9be62fb0c8596d37c37}{%
+           family={Burman},
+           familyi={B\bibinitperiod},
+           given={Prabir},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c31f931673526a648aad6d07e95a5a7e}{%
+           family={Chow},
+           familyi={C\bibinitperiod},
+           given={EDMOND},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3546997d66237df1bd3e744850ee4b28}{%
+           family={NOLAN},
+           familyi={N\bibinitperiod},
+           given={DEBORAH},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{88eee3013075874a34c168d0a5e7a8d0}
+      \strng{fullhash}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{fullhashraw}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{bibnamehash}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{authorbibnamehash}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{authornamehash}{88eee3013075874a34c168d0a5e7a8d0}
+      \strng{authorfullhash}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{authorfullhashraw}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper we extend the technique of cross-validation to the case where observations form a general stationary sequence. We call it h-block cross-validation, because the idea is to reduce the training set by removing the h observations preceding and following the observation in the test set. We propose taking h to be a fixed fraction of the sample size, and we add a term to our h-block cross-validated estimate to compensate for the underuse of the sample. The advantages of the proposed modification over the cross-validation technique are demonstrated via simulation.}
+      \field{issn}{0006-3444}
+      \field{journaltitle}{Biometrika}
+      \field{month}{06}
+      \field{number}{2}
+      \field{title}{A cross-validatory method for dependent data}
+      \field{volume}{81}
+      \field{year}{1994}
+      \field{pages}{351\bibrangedash 358}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1093/biomet/81.2.351
+      \endverb
+      \verb{eprint}
+      \verb https://academic.oup.com/biomet/article-pdf/81/2/351/1269232/81-2-351.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1093/biomet/81.2.351
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1093/biomet/81.2.351
+      \endverb
+    \endentry
+    \entry{ChenGuestrin2016}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=48461ccdf50ba5a54e29a354aa734c0b}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Tianqi},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c9ab8ac486d7f85ac914b1a8e51e512b}{%
+           family={Guestrin},
+           familyi={G\bibinitperiod},
+           given={Carlos},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{fullhash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{fullhashraw}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{bibnamehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authorbibnamehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authornamehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authorfullhash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authorfullhashraw}{f79ceb030bcf791e5521f87ac6ada03b}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}
+      \field{title}{XGBoost: A Scalable Tree Boosting System}
+      \field{year}{2016}
+      \field{pages}{785\bibrangedash 794}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1145/2939672.2939785
+      \endverb
+    \endentry
+    \entry{EilersMarx1996}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=b60300e17d89fff6fa0208f670d67a5a}{%
+           family={Eilers},
+           familyi={E\bibinitperiod},
+           given={Paul\bibnamedelimb H.\bibnamedelimi C.},
+           giveni={P\bibinitperiod\bibinitdelim H\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3eb8b849e7cff3a314f62d405b4968a0}{%
+           family={Marx},
+           familyi={M\bibinitperiod},
+           given={Brian\bibnamedelima D.},
+           giveni={B\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{fullhash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{fullhashraw}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{bibnamehash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{authorbibnamehash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{authornamehash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{authorfullhash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{authorfullhashraw}{7337942441b81dbd3ded7b2776e18ca8}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Statistical Science}
+      \field{number}{2}
+      \field{title}{Flexible smoothing with {B}-splines and penalties}
+      \field{volume}{11}
+      \field{year}{1996}
+      \field{pages}{89\bibrangedash 121}
+      \range{pages}{33}
+      \verb{doi}
+      \verb 10.1214/ss/1038425655
+      \endverb
+    \endentry
+    \entry{Nadaraya1964}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=7c96cb892e3d709febb05f732aafb736}{%
+           family={Nadaraya},
+           familyi={N\bibinitperiod},
+           given={E.\bibnamedelimi A.},
+           giveni={E\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{fullhash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{fullhashraw}{7c96cb892e3d709febb05f732aafb736}
+      \strng{bibnamehash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{authorbibnamehash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{authornamehash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{authorfullhash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{authorfullhashraw}{7c96cb892e3d709febb05f732aafb736}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Theory of Probability \& Its Applications}
+      \field{number}{1}
+      \field{title}{On Estimating Regression}
+      \field{volume}{9}
+      \field{year}{1964}
+      \field{pages}{141\bibrangedash 142}
+      \range{pages}{2}
+      \verb{doi}
+      \verb 10.1137/1109020
+      \endverb
+    \endentry
+    \entry{Racine2000}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c1ead43d556387e3ca8cda7097411d27}{%
+           family={Racine},
+           familyi={R\bibinitperiod},
+           given={Jeff},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{fullhash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{fullhashraw}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{bibnamehash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{authorbibnamehash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{authornamehash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{authorfullhash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{authorfullhashraw}{c1ead43d556387e3ca8cda7097411d27}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This paper considers the impact of Shao's (1993) recent results regarding the asymptotic inconsistency of model selection via leave-one-out cross-validation on h-block cross-validation, a cross-validatory method for dependent data proposed by Burman, Chow and Nolan (1994, Journal of Time Series Analysis 13, 189–207). It is shown that h-block cross-validation is inconsistent in the sense of Shao (1993, Journal of American Statistical Association 88(422), 486–495) and therefore is not asymptotically optimal. A modification of the h-block method, dubbed ‘hv-block’ cross-validation, is proposed which is asymptotically optimal. The proposed approach is consistent for general stationary observations in the sense that the probability of selecting the model with the best predictive ability converges to 1 as the total number of observations approaches infinity. This extends existing results and yields a new approach which contains leave-one-out cross-validation, leave-nv-out cross-validation, and h-block cross-validation as special cases. Applications are considered.}
+      \field{issn}{0304-4076}
+      \field{journaltitle}{Journal of Econometrics}
+      \field{number}{1}
+      \field{title}{Consistent cross-validatory model-selection for dependent data: hv-block cross-validation}
+      \field{volume}{99}
+      \field{year}{2000}
+      \field{pages}{39\bibrangedash 61}
+      \range{pages}{23}
+      \verb{doi}
+      \verb https://doi.org/10.1016/S0304-4076(00)00030-0
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0304407600000300
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0304407600000300
+      \endverb
+      \keyw{Cross-validation,Dependence,Model-selection,Prediction}
+    \endentry
+    \entry{wood2024neighbourhood}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=4f816a96f8d000d6cb78dea6a1f2da1d}{%
+           family={Wood},
+           familyi={W\bibinitperiod},
+           given={Simon\bibnamedelima N.},
+           giveni={S\bibinitperiod\bibinitdelim N\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{fullhash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{fullhashraw}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{bibnamehash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{authorbibnamehash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{authornamehash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{authorfullhash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{authorfullhashraw}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2404.16490}
+      \field{title}{On Neighbourhood Cross Validation}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2404.16490
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2404.16490
+      \endverb
+    \endentry
+  \enddatalist
+  \datalist[entry]{apa/global//global/global/global}
+    \entry{arlot2010survey}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=f536a5b1bc63890da21d6091897b1cad}{%
+           family={Arlot},
+           familyi={A\bibinitperiod},
+           given={Sylvain},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3250ac136af0d1776387e11bb5155201}{%
+           family={Celisse},
+           familyi={C\bibinitperiod},
+           given={Alain},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{2}{%
+        {The Institute of Mathematical Statistics}%
+        {the Bernoulli Society}%
+      }
+      \strng{namehash}{0007c88a802241e561514e407cb6dc92}
+      \strng{fullhash}{0007c88a802241e561514e407cb6dc92}
+      \strng{fullhashraw}{0007c88a802241e561514e407cb6dc92}
+      \strng{bibnamehash}{0007c88a802241e561514e407cb6dc92}
+      \strng{authorbibnamehash}{0007c88a802241e561514e407cb6dc92}
+      \strng{authornamehash}{0007c88a802241e561514e407cb6dc92}
+      \strng{authorfullhash}{0007c88a802241e561514e407cb6dc92}
+      \strng{authorfullhashraw}{0007c88a802241e561514e407cb6dc92}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Statistics Surveys}
+      \field{title}{A survey of cross-validation procedures for model selection}
+      \field{volume}{4}
+      \field{year}{2010}
+      \field{pages}{40\bibrangedash 79}
+      \range{pages}{40}
+      \verb{doi}
+      \verb 10.1214/09-SS054
+      \endverb
+    \endentry
+    \entry{BurmanChowNolan1994}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=964847d725eec9be62fb0c8596d37c37}{%
+           family={Burman},
+           familyi={B\bibinitperiod},
+           given={Prabir},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c31f931673526a648aad6d07e95a5a7e}{%
+           family={Chow},
+           familyi={C\bibinitperiod},
+           given={EDMOND},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3546997d66237df1bd3e744850ee4b28}{%
+           family={NOLAN},
+           familyi={N\bibinitperiod},
+           given={DEBORAH},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{88eee3013075874a34c168d0a5e7a8d0}
+      \strng{fullhash}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{fullhashraw}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{bibnamehash}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{authorbibnamehash}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{authornamehash}{88eee3013075874a34c168d0a5e7a8d0}
+      \strng{authorfullhash}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \strng{authorfullhashraw}{b83d136c0c71ca38f6e9594a1e6b81a5}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper we extend the technique of cross-validation to the case where observations form a general stationary sequence. We call it h-block cross-validation, because the idea is to reduce the training set by removing the h observations preceding and following the observation in the test set. We propose taking h to be a fixed fraction of the sample size, and we add a term to our h-block cross-validated estimate to compensate for the underuse of the sample. The advantages of the proposed modification over the cross-validation technique are demonstrated via simulation.}
+      \field{issn}{0006-3444}
+      \field{journaltitle}{Biometrika}
+      \field{month}{06}
+      \field{number}{2}
+      \field{title}{A cross-validatory method for dependent data}
+      \field{volume}{81}
+      \field{year}{1994}
+      \field{pages}{351\bibrangedash 358}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1093/biomet/81.2.351
+      \endverb
+      \verb{eprint}
+      \verb https://academic.oup.com/biomet/article-pdf/81/2/351/1269232/81-2-351.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1093/biomet/81.2.351
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1093/biomet/81.2.351
+      \endverb
+    \endentry
+    \entry{ChenGuestrin2016}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=48461ccdf50ba5a54e29a354aa734c0b}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Tianqi},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c9ab8ac486d7f85ac914b1a8e51e512b}{%
+           family={Guestrin},
+           familyi={G\bibinitperiod},
+           given={Carlos},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{fullhash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{fullhashraw}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{bibnamehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authorbibnamehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authornamehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authorfullhash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authorfullhashraw}{f79ceb030bcf791e5521f87ac6ada03b}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}
+      \field{title}{XGBoost: A Scalable Tree Boosting System}
+      \field{year}{2016}
+      \field{pages}{785\bibrangedash 794}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1145/2939672.2939785
+      \endverb
+    \endentry
+    \entry{EilersMarx1996}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=b60300e17d89fff6fa0208f670d67a5a}{%
+           family={Eilers},
+           familyi={E\bibinitperiod},
+           given={Paul\bibnamedelimb H.\bibnamedelimi C.},
+           giveni={P\bibinitperiod\bibinitdelim H\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3eb8b849e7cff3a314f62d405b4968a0}{%
+           family={Marx},
+           familyi={M\bibinitperiod},
+           given={Brian\bibnamedelima D.},
+           giveni={B\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{fullhash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{fullhashraw}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{bibnamehash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{authorbibnamehash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{authornamehash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{authorfullhash}{7337942441b81dbd3ded7b2776e18ca8}
+      \strng{authorfullhashraw}{7337942441b81dbd3ded7b2776e18ca8}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Statistical Science}
+      \field{number}{2}
+      \field{title}{Flexible smoothing with {B}-splines and penalties}
+      \field{volume}{11}
+      \field{year}{1996}
+      \field{pages}{89\bibrangedash 121}
+      \range{pages}{33}
+      \verb{doi}
+      \verb 10.1214/ss/1038425655
+      \endverb
+    \endentry
+    \entry{Nadaraya1964}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=7c96cb892e3d709febb05f732aafb736}{%
+           family={Nadaraya},
+           familyi={N\bibinitperiod},
+           given={E.\bibnamedelimi A.},
+           giveni={E\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{fullhash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{fullhashraw}{7c96cb892e3d709febb05f732aafb736}
+      \strng{bibnamehash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{authorbibnamehash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{authornamehash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{authorfullhash}{7c96cb892e3d709febb05f732aafb736}
+      \strng{authorfullhashraw}{7c96cb892e3d709febb05f732aafb736}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Theory of Probability \& Its Applications}
+      \field{number}{1}
+      \field{title}{On Estimating Regression}
+      \field{volume}{9}
+      \field{year}{1964}
+      \field{pages}{141\bibrangedash 142}
+      \range{pages}{2}
+      \verb{doi}
+      \verb 10.1137/1109020
+      \endverb
+    \endentry
+    \entry{Racine2000}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c1ead43d556387e3ca8cda7097411d27}{%
+           family={Racine},
+           familyi={R\bibinitperiod},
+           given={Jeff},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{fullhash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{fullhashraw}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{bibnamehash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{authorbibnamehash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{authornamehash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{authorfullhash}{c1ead43d556387e3ca8cda7097411d27}
+      \strng{authorfullhashraw}{c1ead43d556387e3ca8cda7097411d27}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This paper considers the impact of Shao's (1993) recent results regarding the asymptotic inconsistency of model selection via leave-one-out cross-validation on h-block cross-validation, a cross-validatory method for dependent data proposed by Burman, Chow and Nolan (1994, Journal of Time Series Analysis 13, 189–207). It is shown that h-block cross-validation is inconsistent in the sense of Shao (1993, Journal of American Statistical Association 88(422), 486–495) and therefore is not asymptotically optimal. A modification of the h-block method, dubbed ‘hv-block’ cross-validation, is proposed which is asymptotically optimal. The proposed approach is consistent for general stationary observations in the sense that the probability of selecting the model with the best predictive ability converges to 1 as the total number of observations approaches infinity. This extends existing results and yields a new approach which contains leave-one-out cross-validation, leave-nv-out cross-validation, and h-block cross-validation as special cases. Applications are considered.}
+      \field{issn}{0304-4076}
+      \field{journaltitle}{Journal of Econometrics}
+      \field{number}{1}
+      \field{title}{Consistent cross-validatory model-selection for dependent data: hv-block cross-validation}
+      \field{volume}{99}
+      \field{year}{2000}
+      \field{pages}{39\bibrangedash 61}
+      \range{pages}{23}
+      \verb{doi}
+      \verb https://doi.org/10.1016/S0304-4076(00)00030-0
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0304407600000300
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0304407600000300
+      \endverb
+      \keyw{Cross-validation,Dependence,Model-selection,Prediction}
+    \endentry
+    \entry{wood2024neighbourhood}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=4f816a96f8d000d6cb78dea6a1f2da1d}{%
+           family={Wood},
+           familyi={W\bibinitperiod},
+           given={Simon\bibnamedelima N.},
+           giveni={S\bibinitperiod\bibinitdelim N\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{fullhash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{fullhashraw}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{bibnamehash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{authorbibnamehash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{authornamehash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{authorfullhash}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \strng{authorfullhashraw}{4f816a96f8d000d6cb78dea6a1f2da1d}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2404.16490}
+      \field{title}{On Neighbourhood Cross Validation}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2404.16490
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2404.16490
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

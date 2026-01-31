@@ -1,0 +1,101 @@
+\section{Simulation Study}
+
+
+We evaluate dependence-aware cross-validation (CV) schemes against a naive randomized baseline using Monte Carlo simulations. The goal is to quantify (i) the bias of CV risk estimation under serial dependence and (ii) the impact on hyperparameter selection and out-of-sample performance.
+
+
+
+Each Monte Carlo replication follows the same workflow:
+\begin{enumerate}
+    \item Generate a training series $\{(x_t,y_t)\}_{t=1}^n$ from a nonparametric regression data generating process (DGP) with dependent errors.
+    \item For each CV scheme and each model family, select the hyperparameter $\hat\theta$ by minimizing the corresponding CV score.
+    \item Refit the model on the full training series using $\hat\theta$.
+    \item Evaluate performance on the final part of the generated data, which has independent errors from those of the train dataset.
+\end{enumerate}
+
+
+
+
+\subsection{Data generating process (DGP)}
+\label{sec:sim_dgp}
+
+We generate data from
+\begin{equation}
+\label{eq:dgp}
+    y_t = f(x_t) + \varepsilon_t,\qquad t=1,\dots,n,
+\end{equation}
+where $x_t$ is a normalized time index (we set $x_t=t/n$), $f(\cdot)$ is a deterministic signal function, and $\{\varepsilon_t\}$ is a mean-zero dependent error process with $\mathrm{Var}(\varepsilon_t)=\sigma^2$. Unless stated otherwise, we use $n_{\text{train}}=700$ for training and $n_{\text{test}}=300$ for testing.
+
+\subsubsection{Error Processes.}
+To study the effect of dependence, we consider the following classes (parameters fixed within each experiment):
+\begin{itemize}
+    \item \textbf{AR(1):} $\varepsilon_t=\rho\,\varepsilon_{t-1}+\eta_t$.
+    \item \textbf{MA(1):} $\varepsilon_t=\eta_t+\theta\,\eta_{t-1}$.
+    \item \textbf{ARIMA($p,d,q$):} an integrated ARMA process (in our runs we use ARIMA$(2,0,10)$, i.e.\ ARMA$(2,10)$):
+    \begin{equation}
+        \varepsilon_t = \phi_1 \varepsilon_{t-1} + \phi_2 \varepsilon_{t-2}
+        + \eta_t + \sum_{j=1}^{10}\theta_j \eta_{t-j}.
+    \end{equation}
+    \item \textbf{Seasonal AR:} $\varepsilon_t=\rho_1\varepsilon_{t-1}+\rho_s\varepsilon_{t-s}+\eta_t$.
+\end{itemize}
+Here $\{\eta_t\}$ is i.i.d.\ white noise. Coefficients are chosen to satisfy stationarity/invertibility where relevant.
+
+
+
+\subsection{Signals}
+
+We consider three signal families representing different levels of smoothness and localization (Figure~\ref{fig:signals}) (Exact parameter values used in each experiment are reported in Appendix \ref{app:repro}).
+
+\subsubsection{Local Bump.}
+A localized feature implemented via a Gaussian bump:
+\[
+h(x)=a\exp\left\{-\frac{1}{2}\left(\frac{x-c}{w}\right)^2\right\},
+\]
+where $a$ controls amplitude, $w$ controls width, and $c$ sets the location of the bump.
+To this, we added a baseline
+$$f_{\sin}(x)=0.15 \sin\left( 2\pi \frac{x}{l} \right),$$
+$$f_{\text{bump}}(x)=h(x)+f_{\sin}(x).$$
+
+\subsubsection{Smooth Trend.}
+A smooth trend formed by a low-degree polynomial plus a low-frequency sinusoid:
+\[
+f_{\text{poly}}(x)=\sum_{p=1}^d (0.5)^p x^p,\qquad
+f_{\text{sin}}(x)=A\sin\!\left(2\pi\frac{x-x_{\min}}{P}\right),
+\]
+\[
+f_{\text{trend}}(x)=f_{\text{poly}}(x)+f_{\text{sin}}(x).
+\]
+
+\subsubsection{Nonlinear Curvature.}
+A very smooth nonlinear shape intended to mimic gradual growth with a kink:
+\[
+S(x)=\tanh(2.5\,s\,x),\qquad
+g(x)=\frac{1}{1+\exp\{-8(x-k)\}},
+\]
+\[
+B_L(x)=-0.6x^3,\quad B_R(x)=0.9x^3+0.2x,\]\[
+B(x)=(1-g(x))B_L(x)+g(x)B_R(x),\]\[
+f_{\text{non-lin}}(x)=0.7S(x)+0.6B(x).
+\]
+
+
+
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=0.8\textwidth,height=0.46\textheight,keepaspectratio]{../Code/figures/ACF.pdf}
+  \caption{Autocorrelation functions (ACFs) of the simulated \emph{error processes} used in the DGP.}
+  \label{fig:ACF}
+\end{figure*}
+
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=0.8\textwidth,height=0.46\textheight,keepaspectratio]{../Code/figures/signals_with_errors.pdf}
+  \caption{Signal families used in the simulation study (shown with representative noise realizations).}
+  \label{fig:signals}
+\end{figure*}
+
+
+
+

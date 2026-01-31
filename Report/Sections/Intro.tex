@@ -1,0 +1,31 @@
+\section{Introduction}
+
+
+
+
+Cross-validation (CV) is a standard tool for estimating predictive risk and selecting model complexity in a statistical learning setting. In nonparametric regression, predictive performance is affected by smoothing or regularization hyperparameters (e.g., the badwidth $h$ in kernel regression or the penalty parameter $\lambda$ in penalized splines). CV provides a data-driven approach to selecting these hyperparameters by approximating out-of-sample mean squared error (MSE), and is widely used in the model-selection literature \citep{arlot2010survey}.
+
+A key limitation is that most standard CV schemes (e.g., randomized $K$-fold CV, LOOCV) assume independence of the datapoints: validation observations are treated as independent from the training data. Time-dependent data often violate this assumption, and autocorrelated observations are common in many settings. When errors are serially correlated, observations close in time share information, and random shuffling can use highly correlated neighbors in the training and validation sets. As we will show, this results in leakage between training and validation sets, which leads to optimistically biased CV risk estimates, and selection of overly flexible models (undersmoothing) that overfit to the noise rather than the signal. Dependance-aware alternatives model this by enforcing temporal structure in the splits, for example by blocked or buffered validation \citep{BurmanChowNolan1994,Racine2000}. For forecasting problems, common in fields such as econometrics, rolling-origin (or walk-forward) cross-validation has substantial benefits over traditional CV methods.
+
+
+
+
+
+\subsection{Research Question}
+
+This report studies why naive (randomized) CV can fail under temporal dependence, and evaluates CV schemes designed to reduce leakage. Specifically, using synthetic data with autocorrelated errors, we aim to study:
+\begin{enumerate}[(i)]
+	\item the size of the bias of naive CV as an estimator of test MSE under different dependence strengths and signal complexities;
+	\item which depence-aware CV schemes have the highest stability and reliable hyperparameter selection;
+	\item how these conclusions vary across regression models (kernel regression, penalized splines, and gradient-boosted trees).
+\end{enumerate}
+
+
+We aim to provide insights on the cost-performance tradeoff of these models, to assess whether the computational cost of each CV scheme results in better performance. While LOOCV is statistically appealing for dependent data, it can be computationally impossible to implement for large datasets. Recent developments show how a broad class of neighborhood CV criteria for quadratically penalized models can be computed at a cost comparable to a single model fit, making them usable in practice \citep{wood2024neighbourhood}.
+
+
+
+\subsection{Outline}
+
+The report starts by formalizing the regression setting with dependent errors, and explain the mechanism by which naive CV underestimates predictive risk. Next, we describe the dependence-aware CV schemes considered and the computational shortcut used to implement neighborhood CV efficiently for penalized splines. We then present the simulation results across multiple signals and error structures, and report some practical recommendations. We conclude the report by presenting complementary findings on real-world financial and environmental series that show distinct autocorrelation patterns, followed by a brief discussion and conclusion.
+

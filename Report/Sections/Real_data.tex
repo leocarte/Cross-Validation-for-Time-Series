@@ -1,0 +1,67 @@
+\section{Real Data Applications}
+
+Following the simulation study, we apply our Cross-Validation frameworks to two real-world datasets. These datasets were specifically selected from the UCI Machine Learning Repository.
+
+For each dataset, we performed stationarity tests using the Augmented Dickey-Fuller (ADF) test (with AIC autolag selection) and inspected the Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) to identify the dependence structure.
+
+\subsection{Dataset Diagnostics and Characterization}
+
+
+\subsubsection{Air Quality (Italy).}
+
+The Air Quality series shows strong short-lag dependence and clear periodic structure: the ACF decays slowly and exhibits pronounced peaks at regular lags (consistent with seasonality). The PACF is dominated by the first lag, suggesting a low-order AR component in addition to the seasonal pattern. This motivates time-respecting validation and, for buffered CV, choosing $\ell$ at least on the order of the seasonal period (Figure~\ref{fig:air_quality_diagnostics}).
+
+
+\subsubsection{CNNpred (S\&P 500).}
+For close prices, the ACF remains near 1 across many lags and the PACF is dominated by lag 1, consistent with a nonstationary level series. After differencing, both ACF and PACF are close to zero beyond lag 0, indicating an approximately stationary short-memory process. This is representative of an ARIMA process (Figure~\ref{fig:sp500_diagnostics}).
+
+
+
+
+\subsection{Results}
+
+
+
+
+
+
+\subsubsection{Air Quality (Italy).} For this dataset, we predicted air quality from 5 to 10 days ahead.
+Figure~\ref{fig:air_quality_train_test_preds} shows that randomized CV is overly optimistic on the \textit{Air Quality} series and leads to substantially worse generalization. Naive CV shows much smaller CV error estimates than the time-aware schemes, while producing the largest test errors. Block and buffered block CV inflate the estimated error (particularly for kernel regression), reflecting reduced leakage. These schemes select smoother hyperparameters and achieve significantly lower test MSE. Walk-forward validation performs best overall on this dataset.
+
+For kernel regression, naive CV selects a very small bandwidth ($h \approx 0.2$) and yields a high test MSE, whereas block, buffered, and walk-forward all select a much larger bandwidth and reduce test MSE. For penalized splines, naive CV selects a weak penalty with poor test performance, while the dependence-aware schemes select strong smoothing and achieve test MSE near 1.9. For XGBoost, naive CV selects a deeper tree and performs worse than the time-respecting schemes, which select a shallow tree and improve test MSE to around 2.6. Overall, the real-data behavior closely matches the simulation finding: ignoring temporal structure biases CV toward overly complex models.
+
+
+
+
+
+\subsubsection{CNNpred (S\&P 500).}
+Figure~\ref{fig:sp500_train_test_preds} compares train/test predictions on the S\&P~500 series under hyperparameters selected by each CV scheme. We predict the index level in a window of 20 to 30 days ahead, to simulate forecasting of medium-term returns.
+
+
+
+The naive randomized CV scheme selects markedly more aggressive (higher-variance) settings and performs substantially worse out-of-sample than time-respecting schemes. In particular, for kernel regression, naive CV selects a very small bandwidth ($h \approx 6.35$) and yields extremely poor test performance, consistent with severe leakage-driven undersmoothing and instability at the forecast boundary. In particular, the bandwidth chosen is so low that it doesn't match the prediction window, leading to unusable results.
+
+ For penalized splines, naive CV likewise selects minimal regularization ($\lambda \approx 0.01$) and exhibits the worst test error, whereas block and walk-forward CV select much stronger smoothing and substantially reduce test error. Buffered block validation produces the lowest test error for the spline model and yields stable forward predictions consistent with the forecasting objective.
+
+For XGBoost, the differences across schemes are smaller than for smoothers and, interestingly, naive CV achieves the lowest test MSE. However, the same qualitative pattern holds: time-respecting schemes avoid the most extreme settings (except the walk-forward CV that selects the same hyperparameter $d$ = 7 as the naive one).
+
+
+
+\begin{figure*}[p]\centering
+\includegraphics[width=0.85\textwidth]{../Code/figures/fit_air_quality_run.pdf}
+\caption{\textbf{Air Quality} dataset: train (blue) and test-set predictions (red) under hyperparameters selected by each CV scheme.
+Rows correspond to regression methods (kernel regression, penalized splines, XGBoost) and columns to CV schemes
+(naive, block, buffered block, walk-forward). The dashed vertical line marks the train/test split; grey points denote
+the observed test values. Panel titles report the selected hyperparameter and the resulting test MSE.}
+\label{fig:air_quality_train_test_preds}
+
+\end{figure*}
+
+
+\begin{figure*}[p]\centering
+\includegraphics[width=0.85\textwidth]{../Code/figures/fit_sp500_run.pdf}
+\caption{\textbf{S\&P 500} dataset: train (blue) and test-set predictions (red) under hyperparameters selected by each CV scheme. Rows correspond to regression methods (kernel regression, penalized splines, XGBoost) and columns correspond to CV schemes (naive, block, buffered block, walk-forward). The dashed vertical line marks the train/test split; grey points denote observed test values. Panel titles report the selected hyperparameter and the resulting test MSE.}
+\label{fig:sp500_train_test_preds}
+\end{figure*}
+
+

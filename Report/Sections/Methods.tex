@@ -1,0 +1,104 @@
+\section{Regression Models and Hyperparameters}
+\label{sec:models}
+
+This section defines the regression estimators used in our comparisons and clarifies which hyperparameter each cross-validation (CV) scheme selects. Throughout, we treat the predictor as the ordered time index $x_t=t/n \in (0,1]$ and fit models of the form $y_t \approx f(x_t)$. For any training index set $T \subset \{1,\dots,n\}$, we write $\hat f_{\theta,T}$ for the fitted regression function under hyperparameter $\theta$ trained only on indices in $T$. In the simulation study, $\theta$ is chosen by minimizing a CV estimate of prediction error.
+Table \ref{tab:comparison} shows the effects of the hyperparameter choice on the predictions of the regression.
+
+
+
+
+\subsection{Kernel Regression (Nadaraya--Watson)}
+
+Given training data $\{(x_t,y_t)\}_{t\in T}$, the Nadaraya--Watson \citep{Nadaraya1964} estimator with bandwidth $h>0$ is
+\begin{equation}
+\label{eq:nw}
+\hat f_{h,T}(x)
+=
+\frac{\sum_{t\in T} K_h(x-x_t)\,y_t}{\sum_{t\in T} K_h(x-x_t)},
+\qquad
+K_h(u)=\frac{1}{h}K\!\left(\frac{u}{h}\right),
+\end{equation}
+where we use a Gaussian kernel $K(u)=\exp(-u^2/2)$.
+The bandwidth $h$ controls smoothness: small $h$ yields low bias but high variance (potential overfitting),
+while large $h$ yields smoother estimates.
+
+
+We tune $h$ over a fixed grid (reported in the Appendix \ref{app:repro} for reproducibility) and select $\hat h=\arg\min_h \widehat R_{\mathrm{CV}}(h)$.
+
+
+\subsection{Penalized Splines}
+
+We approximate $f(\cdot)$ using a $p$-dimensional B-spline basis \citep{EilersMarx1996}:
+\[
+f(x)\approx \sum_{j=1}^p \beta_j B_j(x),
+\qquad
+X_{tj}=B_j(x_t),
+\]
+so that fitted values are $X\beta$. For a smoothing parameter $\lambda>0$, we estimate $\beta$ by penalized least squares
+\begin{equation}
+\label{eq:pspline_obj}
+\hat\beta_{\lambda,T}
+=
+\arg\min_{\beta\in\mathbb{R}^p}
+\left\{
+\sum_{t\in T}(y_t-X_t^\top \beta)^2
++
+\lambda \,\|\Delta\beta\|_2^2
+\right\},
+\end{equation}
+where $\Delta$ is a discrete difference operator (typically second differences), penalizing roughness in the coefficient sequence. The fitted function is $\hat f_{\lambda,T}(x)=\sum_{j=1}^p \hat\beta_{\lambda,T,j} B_j(x)$.
+
+In the Gaussian case, \eqref{eq:pspline_obj} has a closed form:
+\begin{equation}
+\label{eq:pspline_closed}
+\hat\beta_{\lambda,T} = (X_T^\top X_T + \lambda \Delta^\top \Delta)^{-1}X_T^\top y_T,
+\end{equation}
+where $X_T$ and $y_T$ denote the design matrix and response vector restricted to indices in $T$.
+
+Small $\lambda$ produces flexible fits (risking undersmoothing), while large $\lambda$ enforces smoothness. Because neighborhood/leave-out validation can require many refits, we use an efficient NCV implementation for penalized splines (Section~\ref{sec:ncv_computation}).
+
+We tune $\lambda$ over a logarithmic grid and select $\hat\lambda=\arg\min_\lambda \widehat R_{\mathrm{NCV}}(\lambda)$ (see Appendix \ref{app:dgp_protocol}).
+
+
+
+
+
+\subsection{Gradient-boosted Trees (XGBoost)}
+
+We use gradient boosting with decision trees as base learners, as implemented in XGBoost \citep{ChenGuestrin2016}. The fitted function is an additive ensemble
+\begin{equation}
+\label{eq:xgb_additive}
+\hat f_T(x) = \sum_{m=1}^M \nu\, g_m(x),
+\end{equation}
+where each $g_m$ is a regression tree, $\nu\in(0,1]$ is the learning rate, and $M$ is the number of boosting rounds. Trees are fit sequentially to reduce a chosen loss (squared error in our experiments), with regularization to control complexity.
+
+To align with the main question (how dependence affects model complexity selection), we tune the maximum tree depth $d$, holding other boosting parameters fixed across CV schemes (learning rate, number of rounds, subsampling, etc.). Depth $d$ is a primary driver of variance and overfitting in tree ensembles.
+
+\subsection{Summary of Tuned Hyperparameters}
+\label{sec:hyper_summary}
+
+For comparability across methods, we tune one primary smoothness/complexity parameter per model, presented in Table \ref{tab:comparison}.
+
+
+
+\begin{table*}
+\centering
+\begin{tabular}{lll}
+\hline
+Model & Hyperparameter & Effect on complexity \\
+\hline
+Kernel regression & $h$ (bandwidth) & smaller $h$ $\implies$ more wiggly fit \\
+Penalized splines & $\lambda$ (penalty) & smaller $\lambda$ $\implies$ less smoothing \\
+XGBoost & $d$ (max depth) & larger $d$ $\implies$ more complex trees \\
+\hline
+\end{tabular}
+\caption{Summary of regression models and primary complexity hyperparameters tuned by cross-validation. Smaller $h$ and $\lambda$ correspond to less smoothing (higher variance), while larger tree depth $d$ increases model flexibility.}\label{tab:comparison}
+\end{table*}
+
+
+
+
+
+
+
+

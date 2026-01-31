@@ -1,0 +1,127 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[customauthors]{template}
+
+\author{%
+  {\large\bfseries
+  \begin{tabular}{c@{\quad}c@{\quad}c}
+    Filippo Reina & Dario Liuzzo & Leonardo Cartesegna \\
+    {\normalsize\normalfont 416318} & {\normalsize\normalfont 408241} & {\normalsize\normalfont 408405}
+  \end{tabular}
+  }
+}
+
+\usepackage{graphicx}
+\usepackage{amsthm}
+
+\newtheorem{theorem}{Claim}
+
+
+\usepackage[most]{tcolorbox}
+
+\tcbset{
+  proofbody/.style={
+    enhanced,
+    breakable,
+    frame hidden,
+    borderline west={1pt}{0pt}{gray},
+    colback=white,
+    boxrule=0pt,
+    left=6pt, right=0pt, top=2pt, bottom=2pt,
+    before upper={\setlength{\parskip}{1em}},
+  }
+}
+
+\newenvironment{claimproof}[1][Proof]{% 
+  \begin{tcolorbox}[proofbody,title={\textbf{#1}},coltitle=black,fonttitle=\normalsize]%
+  \ignorespaces
+}{%
+  \hfill$\square$%
+  \end{tcolorbox}%
+}
+
+
+
+
+\usepackage{cmap}
+\usepackage[T1]{fontenc}
+\usepackage[american]{babel}
+\usepackage{csquotes}
+\usepackage{newtxtext,newtxmath}  
+\usepackage{enumerate}
+
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\mg}[1]{\boldsymbol{#1}}
+\newcommand{\R}{\mathbb R}
+
+
+\pagestyle{plain}
+\setcounter{secnumdepth}{1}
+
+\setlength{\footskip}{2cm}
+
+
+
+\usepackage[
+  backend=biber,
+  style=apa,
+  natbib=true,
+]{biblatex}
+
+\addbibresource{references.bib}
+
+\setlength{\bibhang}{.125in}
+
+\usepackage{float}
+\usepackage[hidelinks]{hyperref}
+
+
+\title{Cross-Validation Under Temporal Dependence: \\Bias, Remedies, and Practical Implications}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Nonparametric regression techniques rely heavily on the optimal selection of smoothing parameters. Standard cross-validation (CV) methods, such as Leave-One-Out (LOOCV) or $k$-fold CV, operate under the assumption of independent errors. When applied to time series or spatial data exhibiting short-range dependence, these ``naive'' methods underestimate prediction error, leading to systematically over-fitted models. This report investigates the theoretical failure of standard CV in correlated settings and evaluates dependence-aware alternatives: Block CV, Buffered (Leave-$(2l+1)$-out) CV, and Walk-Forward Validation. We further elaborate on efficient computational strategies for Neighborhood CV (NCV) in penalized spline settings. We compare these methods using Penalized Splines, Kernel Regression, and Gradient Boosted Trees (XGBoost) across synthetic autoregressive processes and real-world financial and environmental datasets. Our findings provide practical guidelines for model selection in the presence of temporal autocorrelation.
+\end{abstract}
+
+
+
+\input{Sections/Intro}
+\input{Sections/Theory}
+\input{Sections/Methods}
+\input{Sections/Splines}
+\input{Sections/Simulation_study}
+\input{Sections/Results}
+
+
+
+\input{Sections/Real_data}
+
+
+\input{Sections/Discussion}
+\input{Sections/Conclusion}
+
+
+
+
+
+\nocite{Chu}
+\nocite{Roberts}
+\printbibliography
+
+
+\input{Sections/Appendix}
+
+
+
+
+\end{document}

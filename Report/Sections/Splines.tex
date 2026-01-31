@@ -1,0 +1,163 @@
+\section{Efficient Computation for Penalized Splines (NCV)}\label{sec:ncv_computation}
+
+
+
+Neighborhood Cross-Validation (NCV) is statistically attractive for time series regression because it reduces the leakage mechanism identified in Section~\ref{sec:naive_failure} by omitting a local neighborhood around each validation index. However, a naive implementation is computationally prohibitive: for a series of length $n$, Leave-$(2\ell+1)$-out NCV requires fitting the model $n$ times per hyperparameter value, which becomes quickly unfeasible as the dataset size grows.
+
+We overcome this issue by adopting the coefficient approximation method proposed by \cite{wood2024neighbourhood}.
+
+\subsection{Penalized Spline Estimator}
+\label{sec:spline_estimator}
+
+We estimate the regression function $f(\cdot)$ using a basis expansion. Let $X\in\mathbb{R}^{n\times p}$ be the spline design matrix, $\beta\in\mathbb{R}^p$ the coefficient vector, and $f(x_t)\approx (X\beta)_t$. For a smoothing/penalty hyperparameter $\lambda$, the penalized objective can be written as
+\begin{equation}
+\label{eq:pen_obj}
+L_\lambda(\beta)=D(y, X\beta)+\frac{1}{2}\beta^\top S_\lambda \beta,
+\end{equation}
+where $D(\cdot)$ is a (negative log-likelihood or squared-error) loss and $S_\lambda$ is the penalty matrix (e.g., for P-splines with a difference operator $\Delta$, one can take $S_\lambda=\lambda\,\Delta^\top \Delta$). In the Gaussian/squared-error case,
+\[
+D(y,X\beta)=\frac{1}{2}\|y-X\beta\|_2^2,
+\qquad
+\nabla^2 D(y,X\beta)=X^\top X.
+\]
+Let $\hat\beta_\lambda$ denote the minimizer of \eqref{eq:pen_obj}.
+
+\subsection{Neighborhood CV Objective and Naive Cost}
+\label{sec:ncv_objective}
+
+For each index $i$, define a neighborhood
+\[
+J_i=\{i-\ell,\dots,i+\ell\}\cap\{1,\dots,n\}.
+\]
+NCV evaluates prediction of $y_i$ from a model fitted after removing $J_i$:
+\begin{equation}
+\label{eq:ncv_def}
+\widehat R_{\mathrm{NCV}}(\lambda)
+=
+\frac{1}{n}\sum_{i=1}^n
+\left(y_i-\widehat y_{i,-J_i}(\lambda)\right)^2,
+\end{equation}
+\begin{equation}
+\label{eq:ncv_def2}
+\widehat y_{i,-J_i}(\lambda) = X_i^\top \hat\beta_{\lambda,-J_i},
+\end{equation}
+where $X_i^\top$ denotes the $i$th row of $X$, and $\hat\beta_{\lambda,-J_i}$ minimizes \eqref{eq:pen_obj} computed on the reduced dataset
+$\{1,\dots,n\}\setminus J_i$.
+
+\subsubsection{Naive Complexity.}
+If one penalized spline fit costs $O(np^2)$ (dense linear algebra with $p$ basis coefficients), then computing \eqref{eq:ncv_def} by refitting $n$ times costs $O(n^2p^2)$ per $\lambda$, which is infeasible for large $n$ or for tuning over a grid of candidate $\lambda$ values. The computational shortcut will reduce computational cost to $O(np^2)$, comparable to a single model fit.
+
+\subsection{FastNCV idea: one Newton Step from the Full-data Solution}
+\label{sec:newton_update}
+
+Following \cite{wood2024neighbourhood}, we avoid refitting from scratch by approximating each leave-neighborhood solution
+$\hat\beta_{\lambda,-J_i}$ using a single Newton step starting from the full-data optimum $\hat\beta_\lambda$.
+
+Write the full objective as $L_\lambda(\beta)$ and define the contribution of the omitted points as
+\[
+D_{J_i}(\beta)=\sum_{t\in J_i} d_t(\beta),
+\]
+so that the reduced objective is $L_{\lambda,-J_i}(\beta)=L_\lambda(\beta)-D_{J_i}(\beta)$.
+Let
+\begin{align*}
+H_\lambda &= \nabla^2 L_\lambda(\hat\beta_\lambda),
+\\
+g_{J_i} &= \nabla D_{J_i}(\hat\beta_\lambda),
+\\
+H_{J_i} &= \nabla^2 D_{J_i}(\hat\beta_\lambda).
+\end{align*}
+Since $\nabla L_\lambda(\hat\beta_\lambda)=0$, the reduced gradient at $\hat\beta_\lambda$ equals
+$\nabla L_{\lambda,-J_i}(\hat\beta_\lambda)=-g_{J_i}$, and the reduced Hessian is
+$H_{\lambda,-J_i}\approx H_\lambda - H_{J_i}$. A single Newton step gives the approximation
+\begin{equation}
+\label{eq:newton_step}
+\hat\beta_{\lambda,-J_i}
+\approx
+\hat\beta_\lambda
++
+\left(H_\lambda - H_{J_i}\right)^{-1} g_{J_i}.
+\end{equation}
+In the Gaussian case, $H_\lambda=X^\top X + S_\lambda$ and this has an especially simple form:
+\[
+g_{J_i}=X_{J_i}^\top\left(X_{J_i}\hat\beta_\lambda - y_{J_i}\right),
+\qquad
+H_{J_i}=X_{J_i}^\top X_{J_i},
+\]
+where $X_{J_i}$ and $y_{J_i}$ denote rows/elements restricted to indices in $J_i$.
+
+
+
+\subsubsection{Accuracy vs Exactness.}
+Equation \eqref{eq:newton_step} is a high-accuracy approximation to the leave-neighborhood solution. In our benchmark, this approximation yields CV curves and selected $\lambda$ values that are numerically indistinguishable from the naive refitting baseline (Figure~\ref{fig:equivalence}). If required, the approximation can be refined by additional Newton steps, at increased cost.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.0\linewidth]{../Code/figures/method_comparison_combined.pdf}
+    \caption{Validation of Numerical Equivalence. Top: The fitted spline functions for Standard CV (thick blue line) and FastNCV (thin red dashed line) perfectly overlap. Bottom: The Cross-Validation error curves are identical, selecting the same minimum.}
+    \label{fig:equivalence}
+\end{figure}
+
+
+\subsection{Cholesky downdating and Woodbury fallback}
+\label{sec:chol_downdate}
+
+The computational bottleneck in \eqref{eq:newton_step} is solving linear systems with
+$H_\lambda - H_{J_i}$ for many $i$. Since $|J_i|=2\ell+1$ is small, $H_{J_i}$ is low-rank (rank at most $|J_i|$),
+so we can update factorizations efficiently.
+
+Compute the Cholesky factor $R$ of the full Hessian:
+\[
+R^\top R = H_\lambda.
+\]
+For each neighborhood $J_i$, we need to solve
+\[
+\left(H_\lambda - H_{J_i}\right) u_i = g_{J_i}.
+\]
+Rather than recomputing a factorization from scratch, we perform a sequence of rank-one or rank-$|J_i|$ \emph{downdates} to obtain a factor $\tilde R_i$ such that $\tilde R_i^\top \tilde R_i \approx H_\lambda - H_{J_i}$, and then solve using triangular back-substitution. This reduces the per-neighborhood cost to $O(p^2)$ rather than $O(p^3)$.
+
+
+In rare cases, subtracting $H_{J_i}$ can make the reduced Hessian numerically indefinite (e.g., in sparse regions or for very small $\lambda$). When the Cholesky downdate fails, we fall back to a Woodbury-identity based solve for stability.
+
+\subsection{Algorithm summary}
+\begin{enumerate}
+    \item Fit the full penalized spline model to obtain $\hat\beta_\lambda$ and compute $H_\lambda=\nabla^2 L_\lambda(\hat\beta_\lambda)$.
+    \item Compute the Cholesky factor $R$ such that $R^\top R = H_\lambda$.
+    \item For $i=1,\dots,n$:
+    \begin{enumerate}
+        \item Form $g_{J_i}$ and $H_{J_i}$ from the omitted neighborhood $J_i$ (Gaussian case: $g_{J_i}=X_{J_i}^\top (y_{J_i}-X_{J_i}\hat\beta_\lambda)$ and $H_{J_i}=X_{J_i}^\top X_{J_i}$).
+        \item Downdate $R$ to obtain a factorization for $H_\lambda - H_{J_i}$; if downdating fails, use a Woodbury solve.
+        \item Solve $(H_\lambda - H_{J_i})u_i=g_{J_i}$ and set $\hat\beta_{\lambda,-J_i}\approx \hat\beta_\lambda + u_i$.
+        \item Compute $\widehat y_{i,-J_i}(\lambda)=x_i^\top \hat\beta_{\lambda,-J_i}$ and accumulate $(y_i-\widehat y_{i,-J_i}(\lambda))^2$.
+    \end{enumerate}
+    \item Return $\widehat R_{\mathrm{NCV}}(\lambda)$ as in \eqref{eq:ncv_def2}.
+\end{enumerate}
+
+
+
+
+
+\subsection{Complexity}
+\label{sec:fastncv_complexity}
+
+For each $\lambda$, FastNCV costs one full fit $O(np^2)$ plus $n$ neighborhood updates at $O(p^2)$ each,
+for a total of $O(np^2)$ leading order. In contrast, naive NCV refits $n$ times, yielding $O(n^2p^2)$ per $\lambda$.
+This reduction makes NCV feasible inside hyperparameter tuning loops and Monte Carlo studies.
+
+\subsection{Benchmark: Speed and Numerical Agreement}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.0\linewidth]{../Code/figures/time_comparison_linear.pdf}
+    \caption{Computational efficiency comparison. Top: Execution time (seconds) vs. Sample Size for Standard NCV (red) and FastNCV (green). Bottom: Speedup factor achieved by the optimized implementation.}
+    \label{fig:time_comparison}
+\end{figure}
+
+
+
+To validate the complexity reduction empirically, we benchmarked standard (refit-based) NCV against FastNCV. We generated synthetic datasets with sample sizes $n\in\{100, 500, 1000, 2000, 3000, 5000, 10000\}$ using a fixed ``local bump'' signal and autoregressive noise. For each $n$, we selected $\lambda$ for a penalized spline model (30 knots, cubic degree) over a grid of 30 candidate values, with buffer radius $\ell=10$.
+
+Figure~\ref{fig:time_comparison} reports runtime scaling and speedup: the standard method grows approximately quadratically in $n$, whereas FastNCV scales approximately linearly, yielding large practical gains (e.g., $\approx 10\times$ at $n=1000$ and exceeding $40\times$ by $n=10000$). Figure~\ref{fig:equivalence} assesses numerical agreement: across the benchmark, FastNCV and the refit-based NCV produced overlapping CV surfaces and selected the same minimizing $\lambda$, and the resulting fitted splines were visually indistinguishable.
+
+\paragraph{Implication for the Main Experiments.}
+These results justify using FastNCV-based buffered/neighborhood validation within our simulation study, where repeated
+hyperparameter tuning would otherwise dominate runtime.

@@ -1,0 +1,209 @@
+
+\clearpage
+
+
+
+
+
+\appendix
+
+
+
+
+
+
+
+
+
+
+\section{Real Data Diagnostics}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{../Code/real_datasets/figures/diagnostics_air_quality}
+    \caption{Air Quality (UCI): time series plot (left), ACF (center), and PACF (right) for the response series used in the real-data study. The ACF shows strong short-lag dependence and pronounced repeating peaks at regular lags, indicating seasonal/periodic structure; the PACF shows dominant low-order partial correlations consistent with an autoregressive component in addition to seasonality. Shaded bands indicate approximate 95\% confidence intervals.}
+    \label{fig:air_quality_diagnostics}
+\end{figure}
+
+
+
+
+
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{../Code/real_datasets/figures/diagnostics_close_prices.pdf}
+    \includegraphics[width=\linewidth]{../Code/real_datasets/figures/diagnostics_differenced_prices.pdf}
+    \vspace{0.2cm}
+    \caption{S\&P 500: close prices (top row) and first differences (bottom row), with corresponding ACF (center) and PACF (right). The close-price series exhibits extremely persistent autocorrelation consistent with nonstationary levels, while the differenced series shows near-zero autocorrelation beyond lag 0, consistent with a stationary increment/return-like process. Shaded bands indicate approximate 95\% confidence intervals.}
+    \label{fig:sp500_diagnostics}
+\end{figure}
+
+
+
+
+
+
+\newpage
+
+
+
+
+
+
+
+
+\section{Reproducibility and Implementation Details}
+\label{app:repro}
+
+This appendix documents the exact experimental configuration used in the simulation study, including data-generating process (DGP) parameters, cross-validation (CV) splitting rules, model hyperparameter grids, and software implementation decisions.
+
+\subsection{Data Generating Process and Experimental Design}
+\label{app:dgp}
+
+The simulation study evaluates model performance using synthetic time series generated via the \texttt{synthetic\_series.py} and \texttt{experiment\_helper.py} modules. The data generating process (DGP) follows an additive signal-plus-noise formulation:
+$$
+y_t = f(x_t) + \varepsilon_t, \quad t = 1, \dots, n,
+$$
+where $f(x_t)$ represents the deterministic signal and $\varepsilon_t$ represents a stationary, autocorrelated error process. In all primary benchmarks, the sample size is fixed at $n=1000$.
+
+\subsubsection{Deterministic Signal Specifications}
+The covariate grid is defined as an integer sequence $x_t = t \in \{0, \dots, n-1\}$. The signal component $f(x)$ is generated via \texttt{signals.py}. To ensure comparability across scenarios with differing functional forms, all signals are standardized (centered to mean 0 and scaled to unit variance) prior to the addition of noise. We examine three distinct signal topologies:
+\begin{itemize}
+    \item \textbf{Local Bump (Transient Feature).} A localized Gaussian peak designed to test the model's ability to adapt to sudden local changes.
+    \[
+    f_{\text{bump}}(x) = \exp\left(-\frac{1}{2}\left(\frac{x - c}{w}\right)^2\right) + 0.15\sin\left(\frac{2\pi x}{L}\right),
+    \]
+    where the center $c \approx 0.7n$, width $w \approx 0.08n$, and $L$ represents the span of the domain.
+
+    \item \textbf{Smooth Trend (Low Frequency).} A cubic polynomial combined with a low-frequency sinusoid, representing smooth, global structural changes without abrupt transitions.
+    \[
+    f_{\text{trend}}(x) = \sum_{j=1}^3 \beta_j x^j + 0.3\sin\left(\frac{2\pi x}{n}\right).
+    \]
+    where $\beta_j= (0.5)^j$.
+
+    \item \textbf{Nonlinear Curvature (Structural Break).} A composite function blending a sigmoid-like transition with cubic bending terms, creating a "soft" structural break.
+    \[
+    f_{\text{nonlin}}(z) = 0.7\tanh(2.5 z) + 0.6(0.9z^3 + 0.2z),
+    \]
+    where $z$ is the linearly rescaled index $x \in [-1, 1]$.
+\end{itemize}
+
+\subsubsection{Error processes and parameters (\texttt{utils/errors.py})}
+\label{app:repro_errors}
+
+All error processes use i.i.d.\ Gaussian innovations $\eta_t\sim \mathcal{N}(0,\sigma^2)$, where the \emph{innovation} standard deviation $\sigma$ is passed as a parameter. The code does \emph{not} analytically rescale innovations to impose a fixed marginal variance $\mathrm{Var}(\varepsilon_t)$, and no empirical post-generation rescaling is applied. The marginal variance is therefore implied by the recursion and the chosen $\sigma$.
+
+\paragraph{ \textbf{Initialization and burn-in.}}
+    \begin{itemize}
+        \item Initial states are zero.
+        \item Burn-in is 200 for AR(1); burn-in is 300 for ARMA/ARIMA and seasonal processes; MA(q) uses padding of $q$ extra innovations but no burn-in.
+        \item Burn-in samples are discarded within \texttt{errors.py}.
+    \end{itemize}
+
+\paragraph{ \textbf{Processes used in the main experiments.}}
+    \begin{itemize}
+        \item AR(1): $\rho=0.7$, innovation std $\sigma=0.3$ (notebooks may also test $\rho=0.8$ in sensitivity runs).
+        \item MA(5): $\theta=0.7$ with $q=5$, innovation std $\sigma=0.3$.
+        \item ARIMA(2,0,10) (i.e.\ ARMA(2,10)): $(p,d,q)=(2,0,10)$ with innovation std $\sigma=0.45$.
+        \item Seasonal AR: season period $s=75$, $\rho_1=0.4$, $\rho_S=0.7$, innovation std $\sigma=0.3$.
+    \end{itemize}
+
+\subsection{Monte Carlo Design and Evaluation Protocol}
+\label{app:dgp_protocol}
+
+To ensure the statistical stability of our results, we employ a Monte Carlo design with $R=100$ replications for each unique scenario.
+The benchmarks are stratified by signal type, with independent execution notebooks (\texttt{local\_bump\_runs.ipynb}, \texttt{non\_linear\_runs.ipynb}, \texttt{smooth\_trend\_runs.ipynb}) handling the full Cartesian product of error processes and models for their respective signals:
+\[
+\{signal\}\times \{error\}\times \{model\}\times \{CV scheme\},
+\]
+with:
+\begin{itemize}
+    \item Signals: Local bump, Nonlinear curvature and Smooth trend (one notebook per signal).
+    \item Errors: AR(1), MA(5), ARIMA(2,0,10), Seasonal AR.
+    \item Models: Kernel regression, Penalized spline, XGBoost.
+    \item CV schemes: Naive k-Fold, Block CV, Block buffered CV, Walk forward.
+\end{itemize}
+
+\paragraph{Replication Loop and Independence.}
+For each replication $r \in \{0, \dots, 99\}$:
+\begin{enumerate}
+    \item \textbf{Seed Generation:} Unique random seeds are derived deterministically from the replication index ($S_{\text{train}} = \text{base} + 1000r + 17$). This ensures that the generated error series $\varepsilon_t$ are statistically independent across replications while remaining fully reproducible.
+    \item \textbf{Data Synthesis:} The fixed signal $f(x)$ is combined with a fresh realization of the error process $\varepsilon_t$ to produce the observed vector $y$.
+    \item \textbf{Train/Test Split:} The generated series of length $n=1000$ is partitioned chronologically into a training set ($n_{\text{train}} \approx 700$) and a hold-out test set ($n_{\text{test}} \approx 300$).
+\end{enumerate}
+
+\subsection{Cross-validation implementations (\texttt{utils/cv.py})}
+\label{app:repro_cv}
+
+\begin{itemize}
+    \item \textbf{Shared settings.} Naive and block CV use $K=5$ folds/blocks by default. Splits are built using \texttt{np.array\_split}, so fold sizes differ by at most 1 when $n$ is not divisible by $K$.
+
+    \item \textbf{Naive randomized $K$-fold.}
+    \begin{itemize}
+        \item Shuffle indices once using \texttt{default\_rng(seed).shuffle}.
+        \item Split into $K$ folds via \texttt{np.array\_split}.
+        \item Each fold is sorted; training is the complement of validation; no stratification.
+        \item The same shuffled folds are reused for all hyperparameter values within one CV selection run.
+    \end{itemize}
+
+    \item \textbf{Block $K$-fold.}
+    \begin{itemize}
+        \item Split ordered indices contiguously via \texttt{np.array\_split}.
+        \item Blocks remain chronological.
+    \end{itemize}
+
+    \item \textbf{Buffered block CV.}
+    \begin{itemize}
+        \item Buffer radius $\ell$ is a parameter (default 2; main experiments use $\ell=30$).
+        \item For validation block $[a,b]$, training excludes $[a-\ell,\,b+\ell]$ (clipped to $[1,n]$).
+        \item Buffers are excluded from training only; validation scoring is performed on the validation block itself.
+    \end{itemize}
+
+    \item \textbf{Walk-forward validation.}
+    \begin{itemize}
+        \item Expanding-window scheme: train on indices $[0,\texttt{train\_end})$, validate on $[\texttt{train\_end},\texttt{train\_end}+\texttt{val\_size})$, then increment \texttt{train\_end += step}.
+        \item Refits at every step; stops when validation would exceed $n$.
+        \item In main notebooks: \texttt{initial\_train\_size} $\approx 620$, \texttt{val\_size=10} (ahead\_h), \texttt{step=10} (ahead\_l), yielding approximately $\lfloor(1000-620)/10\rfloor = 38$ validation blocks.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Models, tuning grids, and fixed settings}
+\label{app:repro_models}
+
+\begin{itemize}
+    \item \textbf{Kernel regression (\texttt{kernel\_regression.py}).}
+    \begin{itemize}
+        \item Nadaraya--Watson estimator with Gaussian kernel; a ridge term $10^{-12}$ is used for numerical stability; no boundary correction.
+        \item Bandwidth grid in main notebooks: \texttt{linspace(10, 320, 30)}.
+    \end{itemize}
+
+    \item \textbf{Penalized splines (\texttt{penalized\_spline.py}).}
+    \begin{itemize}
+        \item B-spline basis via \texttt{SplineTransformer}, degree 3, \texttt{n\_knots=30}, \texttt{include\_bias=True}, linear extrapolation.
+        \item P-spline penalty uses a difference matrix of order 2: $S = D^\top D$.
+        \item Lambda grid in main notebooks: \texttt{logspace(1e-2, 1e4, 30)}.
+        \item Solver: linear system $(X^\top X + \lambda S + 10^{-10}I)\beta=X^\top y$ via \texttt{scipy.linalg.solve}.
+    \end{itemize}
+
+    \item \textbf{XGBoost (\texttt{xgb\_regression.py}).}
+    \begin{itemize}
+        \item Booster: \texttt{gbtree}; objective: \texttt{reg:squarederror}.
+        \item Tuned hyperparameter: \texttt{max\_depth} grid in main notebooks is \{2,3,4,5,6,8\}.
+        \item Fixed settings: \texttt{n\_estimators=200}, \texttt{learning\_rate=0.05}, \texttt{subsample=0.8},
+              \texttt{colsample\_bytree=0.8}, \texttt{reg\_lambda=1.0}, \texttt{reg\_alpha=0},
+              \texttt{min\_child\_weight=1.0}, \texttt{gamma=0} (default), \texttt{n\_jobs=1}, \texttt{random\_state=0}.
+        \item No early stopping is used.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Notes on timing benchmarks}
+\label{app:repro_timing}
+
+The \texttt{time\_comparison} notebook evaluates FastNCV speedups compared to Standard Penalized Splines with Buffered CV (in particular with leave 2$\ell$+1 out cross validation) on synthetic data and repeats the computation over
+\texttt{n\_values = [100, 500, 1000, 2000, 3000, 5000, 10000]}. Buffer length is set to $\ell=10$, spline degree is 3, and \texttt{n\_knots=30}.
+

@@ -1,0 +1,147 @@
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{../Code/figures/cv_reliability_comparison.pdf}
+\caption{Estimated risk versus independent test risk on synthetic data.
+    Each point corresponds to one Monte Carlo replication, evaluated at the hyperparameter $\hat\theta$ selected by the given CV scheme. The diagonal line indicates unbiased estimation. Configuration: signal = non-linear, error process = AR(1), $n=1000$.}\label{fig:cv_reliability}
+\end{figure*}
+
+
+
+
+
+\section{Results}
+\label{sec:results}
+
+
+This section presents results from the Monte Carlo simulation study.
+We focus on (i) bias of CV-based risk estimation under temporal dependence, (ii) consequences for hyperparameter selection and fitted function quality, and (iii) sensitivity to signal complexity and dependence structure.
+
+We used some computational shortcuts to avoid having huge runtimes.
+Specifically, at iteration $j$ we fit the model on the most recent $n_0=620$ observations and evaluate multi-step predictive performance over the horizon $\{t_j+10,\dots,t_j+20\}$. We then advance the origin and repeat, aggregating errors across all iterations. The final selected $\hat\theta$ is used to refit the model and produce the fitted curves shown below.
+
+When fitting splines, instead of the buffered block CV we implement the fast NCV method described above.
+
+Even with this strategy, a complete run of the three regression models on $n=1000$ datapoints with $100$ replications requires between one and two hours of runtime.
+
+\subsection{Risk Estimation Bias}
+
+We first quantify how temporal dependence affects \emph{risk estimation} under different cross-validation (CV) schemes. For each Monte Carlo replication and each CV scheme, we record: (i) the CV-estimated risk at the selected hyperparameter, $\widehat R_{\mathrm{CV}}(\hat\theta)$, and (ii) the independent-test risk (test MSE) of the refitted model, $\mathrm{MSE}_{\text{test}}(\hat\theta)$.
+Negative bias indicates optimistic error estimation (underestimation of true predictive error), while positive bias indicates conservative estimation.
+
+Figure~\ref{fig:cv_reliability} plots $\widehat R_{\mathrm{CV}}(\hat\theta)$ against $\mathrm{MSE}_{\text{test}}(\hat\theta)$ for each replication, with points grouped by CV scheme. The $45^\circ$ line corresponds to unbiased risk estimation. Points below the diagonal indicate underestimation.
+
+
+In the configuration shown, that uses an AR(1) error model with the non-linear signal, we distinguish performance of the CV schemes:
+\begin{itemize}
+    \item \textbf{Naive randomized $K$-fold CV} produces points predominantly \emph{above} the diagonal, indicating optimistic risk estimates. This is consistent with the leakage mechanism in Claim~\ref{claim:bias}: random shuffling leaves temporally adjacent observations in the training set, allowing the fitted model to partially ``predict'' the correlated noise in the validation fold.
+    \item \textbf{Block CV} reduces most leakage; points  move closer to the diagonal, though a bias may remain when autocorrelation decays slowly.
+    \item \textbf{Buffered block CV} further reduces boundary dependence; error estimates become more conservative when $\ell$ is large, leading to overestimation of the MSE in some cases.
+    \item \textbf{Walk-forward validation} produces good results, with points concentrating near the diagonal, indicating accurate risk estimation.
+\end{itemize}
+
+
+
+\subsubsection{Risk Estimation Bias Across Time-dependence.} We compared how the risk estimation bias changes as the autocorrelation decays more slowly. Figure~\ref{fig:delta_ACF} shows that, using an ARIMA($p,d,q$), as $q$ increases the bias of the naive CV scheme increases too. However, for that specific DGP (non-linear), the test error for the naive model is sometimes better than that of the time-aware schemes.
+Moreover, it is easy to notice that the largest impact of time-aware methods is the largest when using penalized splines.
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../Code/figures/cv_reliability_comparison_grid.pdf}
+\caption{Estimated risk versus independent test risk on synthetic data.
+    Each point corresponds to one Monte Carlo replication, evaluated at the hyperparameter $\hat\theta$ selected by the given CV scheme. The diagonal line indicates unbiased estimation. Configuration: signal = non-linear, error process = ARIMA($2,0,5$) (Top), ARIMA($2,0,20$) (Bottom), $n=1000$.}\label{fig:delta_ACF}
+\end{figure}
+
+
+
+
+
+\subsection{Hyperparameter Selection}
+
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../Code/figures/hyperparameter_analysis.pdf}
+\caption{Hyperparameter analysis for kernel regression. Top panel: distribution of the selected bandwidth $h$ across Monte Carlo replications for each cross-validation scheme (Naive, Block, Buffered, Walk-forward); dots indicate the mean and boxes show the interquartile range. Bottom panel: stability of selection, measured as the percent deviation of the selected $h$ from the scheme-specific median (lower magnitude indicates more stable selection). Configuration; signal = non-linear, error process = AR(1).}\label{fig:hyperparameter_analysis}
+\end{figure}
+
+
+
+
+Bias in risk estimation directly affects the selected hyperparameter $\hat\theta$. Because naive CV systematically underestimates error when neighbors leak information, it tends to select hyperparameters corresponding to \emph{higher model complexity} (undersmoothing/overfitting). In contrast, block-based schemes penalize complexity more strongly and typically select smoother fits.
+
+
+Figure~\ref{fig:hyperparameter_analysis} shows the distribution of selected bandwidths $h$ for kernel regression  and a representative model. Naive CV tends to choose smaller $h$ than dependence-aware schemes, consistent with overfitting. It is worth noting that the naive scheme chooses the same hyperparameter almost always, while the deviation of the choices for the other methods is higher.
+
+
+
+\subsection{Comparison of Fitted Curves}
+
+
+
+
+
+\begin{figure*}[p]\centering
+	\includegraphics[width=0.9\textwidth]{../Code/figures/fit_non_linear_MA5_runs.pdf}
+	\caption{Qualitative comparison of fitted functions under different CV schemes.
+    Configuration: error = MA(5), signal = non-linear.}\label{fig:fit_synthetic}
+\end{figure*}
+
+
+
+\begin{figure*}[p]
+\centering
+\includegraphics[width=0.9\textwidth]{../Code/figures/boxplot_non_linear_MA5_runs.pdf}
+\caption{Comparison of CV schemes performance under different regression methods and across 100 independent simulations. Configuration: error = MA(5), signal = non-linear.}\label{fig:boxplots_synthetic}
+\end{figure*}
+
+
+
+
+
+Now we compare fitted curves obtained under different CV schemes, focusing on undersmoothing versus oversmoothing as a consequence of the selected hyperparameter. For the walk-forward scheme, we select the hyperparameter $\hat\theta$ using rolling-origin validation on the training series. 
+
+We choose replications to illustrate the typical behavior observed across runs, using the non-linear signal with MA($5$) in Figure \ref{fig:fit_synthetic}. Across signals and error structures, we consistently observe the following behaviors:
+\begin{itemize}
+    \item \textbf{Naive randomized CV (undersmoothing/overfitting).}
+    Fits selected by naive CV tend to track high-frequency fluctuations in the observed series. This behavior reflects leakage: the validation loss is artificially reduced because nearby (correlated) observations remain in the training set. As a result, naive CV frequently selects overly flexible hyperparameters (e.g., small $h$ or small $\lambda$), producing wiggly estimates that generalize poorly. This is reflected in higher test MSE in most of the independent 100 simulations, shown in Figure \ref{fig:boxplots_synthetic}.
+
+    \item \textbf{Block CV (reduced leakage, residual boundary effects).}
+    Block CV yields smoother curves than naive CV, especially for persistent processes, but boundary leakage can remain. With non-linear signal and MA(5) error process, the result is satisfying, with test MSE comparable to that of the other methods.
+
+    \item \textbf{Buffered block CV (leakage control, possible conservatism).}
+    Introducing a buffer radius further separates training from validation points and typically leads to
+    smoother fitted functions. For highly persistent or seasonal dependence, this often corrects the undersmoothing seen in the first two methods. However, the performance is very close to Block CV under most scenarios simulated.
+
+    \item \textbf{Walk-forward validation (forecast-aligned fits).}
+    Walk-forward validation produces fits that are typically smoother than naive CV but less conservative than heavily buffered schemes. Since training always precedes validation, walk-forward selection is most useful when applied to time-series forecasting, and adapts quite well to the local structure of the data.
+\end{itemize}
+Overall, buffered block CV is the method that reduces leakage the most, and performs slightly better in testing. A more detailed comparison across signals and error generating processes follows in Section \ref{sec:discussion}.
+
+\subsection{Model Comparison}
+Overall, splines is the model that is most severely affected by the choice of the hyperparameter. While for kernel density and XGBoost the effect of underestimating the smoothing parameter do not make the predictions unusable, for splines the effects are accentuated.
+This suggests that, for using splines, time-aware cross-validation is required, while for the other methods the disadvantage of naive CV is mainly the poor result in estimating the MSE.
+
+
+
+
+
+\subsection{Time Comparison}
+
+
+The runtime heatmap in Figure \ref{fig:heatmap} indicates that the dominant driver of computational cost is the regression model, not the CV scheme. For the nonlinear signal, kernel regression completes a CV evaluation in roughly 0.02-0.04s across all error types and schemes, while penalized splines are slightly slower at about 0.03-0.06s. By contrast, XGBoost is an order of magnitude more expensive, with times clustered around 0.38-0.47s. Within each model family, the differences between naive, block, buffered, and walk-forward CV are comparatively small, suggesting that choosing a dependence-aware scheme does not impose a substantial additional computational cost relative to the baseline; the notable exception is that walk-forward can be marginally slower for XGBoost due to repeated sequential refits, whereas it can be slightly faster for kernel regression when fewer/smaller training problems are solved per split. This also shows that the fast NCV method for splines is very effective computationally, and has a computational cost similar to the other methods.
+
+
+
+
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../Code/figures/heatmap_running_time_non_linear.pdf}
+\caption{Average running time (seconds; log-scale color map) for cross-validation under the nonlinear signal. Rows correspond to the error type (Seasonal, ARIMA, MA(5), AR(1)); columns correspond to the regression method (Kernel, Spline, XGBoost). Within each panel, the four entries report the mean wall-clock time for Naive randomized K-fold, Block K-fold, Buffered block, and Walk-forward validation. Darker shading indicates longer runtime.}\label{fig:heatmap}
+\end{figure}
+
+
+

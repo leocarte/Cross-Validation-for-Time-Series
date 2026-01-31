@@ -1,0 +1,195 @@
+\section{Theoretical Framework}
+
+We consider the non-parametric regression model
+\begin{equation}
+    y_t = f(x_t) + \varepsilon_t, \qquad t = 1,\dots,n,
+\end{equation}
+where $x_t$ is an ordered index (time), $f(\cdot)$ is an unknown regression function, and
+$\{\varepsilon_t\}$ is a mean-zero, second-order stationary error process.
+In the simulations, we assess out-of-sample predictive performance under an \emph{independent replicate} of the data generating mechanism: after selecting a hyperparameter $\theta$ by cross-validation, we refit the model on the full training series and evaluate mean squared error on a fresh test series generated with the same $f$ but a new realization of $\{\varepsilon_t\}$.
+
+
+To compare validation schemes, it is convenient to define a generic cross-validated risk estimator.
+Let $V_k \subset \{1,\dots,n\}$ denote the validation index set for split $k$ and $T_k$ the
+corresponding training index set.
+Given a model class indexed by a tuning parameter $\theta$ (e.g., bandwidth $h$, spline penalty $\lambda$),
+let $\hat f_{\theta,T_k}$ denote the estimator trained using observations with indices in $T_k$.
+The cross-validation estimate of prediction error is
+\begin{equation}
+\label{eq:cv_generic}
+    \widehat R_{\mathrm{CV}}(\theta)
+    = \frac{1}{\sum_{k=1}^K |V_k|}
+    \sum_{k=1}^K \sum_{t\in V_k} \left(y_t - \hat f_{\theta,T_k}(x_t)\right)^2,
+\end{equation}
+and the selected hyperparameter is $\hat\theta_{\mathrm{CV}}=~\arg\min_{\theta}\widehat R_{\mathrm{CV}}(\theta)$.
+
+
+\subsection{Covariance Structure and Autocorrelation}
+
+
+Temporal dependence is characterized by the autocovariance function (ACVF)
+\begin{equation}
+    \gamma(h) = \mathrm{Cov}(\varepsilon_t, \varepsilon_{t+h}) = \mathbb{E}[\varepsilon_t\varepsilon_{t+h}],
+\end{equation}
+and the autocorrelation function (ACF) $\rho(h)=~\gamma(h)/\gamma(0)$.
+The magnitude and decay of $\rho(h)$ determine how much "information leakage" occurs between training and validation sets.
+We distinguish four common dependence structures:
+\begin{enumerate}
+    \item \textbf{Autoregressive processes (AR($p$)).}
+    For AR(1), $\varepsilon_t=\phi \varepsilon_{t-1}+\eta_t$ with i.i.d.\ innovations $\eta_t$,
+    the autocorrelation decays geometrically:
+    \[
+    \rho(h)=\phi^{|h|}.
+    \]
+    \item \textbf{Moving-average processes (MA($q$)).}
+    For MA($q$), $\varepsilon_t=\eta_t+\sum_{j=1}^q \theta_j \eta_{t-j}$, the ACVF has finite support:
+    \[
+    \gamma(h)=0 \quad \text{for } |h|>q.
+    \]
+    \item \textbf{ARIMA($p,d,q$).}
+    ARIMA models allow integration ($d>0$) and thus can exhibit long-range dependence in levels.
+    This typically complicates the choice of a ``safe'' separation between training and validation sets,
+    motivating data-driven choices based on the ACF of appropriately differenced series.
+    \item \textbf{Seasonal dependence.}
+    Seasonal AR/ARIMA models with period $s$ generate autocorrelation spikes at multiples of $s$:
+    \[
+    |\rho(s)|,\ |\rho(2s)|,\ \dots \ \text{may be large,}
+    \]
+    implying that any leakage-mitigation strategy should account for the seasonal period.
+\end{enumerate}
+
+
+
+
+
+
+
+\subsection{The Failure of Naive Random $k$-fold Cross-Validation}\label{sec:naive_failure}
+
+
+
+
+We consider standard randomized $K$-fold Cross-Validation. The index set $\{1,\dots,n\}$ is randomly
+partitioned into $K$ disjoint folds $V_1,\dots,V_K$. For each fold $k$, we train on
+\[
+T_k = \{1,\dots,n\}\setminus V_k
+\]
+and validate on $V_k$. Given a tuning parameter $\theta$ (e.g., $\theta=\lambda$ for penalized splines),
+let $\hat f_{\theta,T_k}$ denote the estimator trained using the observations in $T_k$.
+The resulting CV score is
+\begin{equation}
+\label{eq:cv_random_kfold}
+\widehat R_{\mathrm{CV}}(\theta)
+=
+\frac{1}{n}\sum_{k=1}^K\sum_{t\in V_k}\left(y_t-\hat f_{\theta,T_k}(x_t)\right)^2.
+\end{equation}
+
+\begin{theorem}[Bias of Random $k$-fold CV]\label{claim:bias}
+When data are serially correlated (e.g., $AR(1)$ errors), random shuffling destroys the temporal order but preserves the dependence between an observation and its neighbors.
+
+In particular, because random shuffling makes it highly likely that near-neighbors of a validation index
+$t\in V_k$ remain in the training set $T_k$, the fitted value $\hat f_{\theta,T_k}(x_t)$ becomes positively correlated with the contemporaneous error $\varepsilon_t$, which reduces the expected validation loss and can favor overly flexible hyperparameters: $\mathbb E \left[ \widehat R_{\mathrm{CV}}(\theta) \right]\ll\mathbb E\left[ \text{True Prediction Error} \right]$.
+	
+\end{theorem}
+
+
+\begin{claimproof}[Proof: negative bias induced by leakage]
+Fix a split $k$ and a validation index $t\in V_k$. Using the model $y_t=f(x_t)+\varepsilon_t$ and expanding the square,
+\begin{align*}
+\mathbb{E}\!\left[\left(y_t-\hat f_{\theta,T_k}(x_t)\right)^2\right]
+&=
+\mathbb{E}\!\left[\left(f(x_t)-\hat f_{\theta,T_k}(x_t)\right)^2\right]
++ \mathbb{E}[\varepsilon_t^2]\\&\quad
++ 2\,\mathbb{E}\!\left[(f(x_t)-\hat f_{\theta,T_k}(x_t))\,\varepsilon_t\right] \\
+&=
+\mathbb{E}\!\left[\left(f(x_t)-\hat f_{\theta,T_k}(x_t)\right)^2\right]
++ \gamma(0)
+\\&\quad- 2\,\mathrm{Cov}\!\left(\hat f_{\theta,T_k}(x_t),\varepsilon_t\right),
+\end{align*}
+where $\gamma(0)=\mathrm{Var}(\varepsilon_t)$ and we use $\mathbb{E}[\varepsilon_t]=0$.
+
+The key term is $\mathrm{Cov}(\hat f_{\theta,T_k}(x_t),\varepsilon_t)$.
+Under randomized $K$-fold splitting, the immediate neighbors $t-1$ and $t+1$ are very likely to lie in the training set
+$T_k$ (probability $\approx (K-1)/K$). For smoothing estimators, $\hat f_{\theta,T_k}(x_t)$ depends strongly on nearby
+responses $y_{t\pm 1}$, and under positive autocorrelation $\varepsilon_t$ is positively correlated with
+$\varepsilon_{t\pm 1}$ (hence with $y_{t\pm 1}$, up to the contribution of $f$). Therefore $\hat f_{\theta,T_k}(x_t)$
+becomes positively correlated with $\varepsilon_t$, implying
+\[
+\mathrm{Cov}\!\left(\hat f_{\theta,T_k}(x_t),\varepsilon_t\right) > 0.
+\]
+Because this positive covariance is subtracted, the expected validation loss is reduced, yielding an
+optimistically biased CV score:
+\begin{align*}
+\mathbb{E}\!\left[\widehat R_{\mathrm{CV}}(\theta)\right]
+\;\approx\;
+R(\theta)\;-\;\text{Bias}_{\text{dependence}}(\theta),
+\\\qquad \text{with } \text{Bias}_{\text{dependence}}(\theta)>0,
+\end{align*}
+where $R(\theta)$ denotes the target predictive risk under a time-respecting (or independent-replicate) evaluation protocol.
+This explains why randomized CV can underestimate test error and select overly flexible $\theta$ (undersmoothing).
+\end{claimproof}
+
+
+
+
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.0\linewidth]{../Code/figures/Cv_schemes}
+    \caption{Visual comparison of Cross-Validation schemes. From top left to bottom right: Naive Random $K$-fold, Block CV, Buffered CV and Walk-Forward Validation. Leave $2\ell+1$ CV is the same as Buffered CV with one datapoint in the validation set. Red indicates validation sets, blue training sets, and gray the excluded buffer zones.}
+    \label{fig:cv_schemes}
+\end{figure}
+
+
+\subsection{Dependence-Aware CV Schemes.}
+
+To mitigate leakage, we modify the way $(T_k,V_k)$ is constructed, so that validation points are well separated from training points by time gaps large enough to make their correlation negligible. The different schemes are summarized visually by Figure~\ref{fig:cv_schemes}.
+
+
+\subsubsection{Block $K$-fold CV.}
+Partition $\left\{ 1,\cdots,n \right\}$ into $K$ contiguous blocks $B_1,\cdots,B_K$ of (approximately) equal size and compute \eqref{eq:cv_generic}. Block CV maintains temporal ordering and avoids shuffling-induced leakage, but training and validation blocks still show correlation near the block boundaries, when dependance persists.
+
+\subsubsection{Buffered Block CV.}
+Buffered block CV removes a buffer zone around each validation block, reducing the correlation that characterizes block CV. Let $\ell\geq 0$ be a buffer radius. If $V_k=B_k=\left\{ a_k,\cdots,b_k \right\}$, define the buffer indices
+\[
+    G_k = \{a_k-\ell,\dots,a_k-1\}\ \cup\ \{b_k+1,\dots,b_k+\ell\},
+\]
+(truncated to $[1,n]$ at the boundaries), and set
+\[
+    T_k=\{1,\dots,n\}\setminus (V_k\cup G_k).
+\]
+The CV score is computed by \eqref{eq:cv_generic} using $(T_k,V_k)$. The role of $\ell$ is to remove lags with large $|\rho(h)|$.
+
+
+A practical heuristic is to choose $\ell$ as the smallest lag such that $|\rho(\ell)|\le \tau$ for a threshold $\tau$ (e.g., $\tau=0.1$) based on an ACF estimate of residuals or a pilot fit. For seasonal dependence, $\ell$ should be at least the seasonal period.
+
+
+\subsubsection{Leave-$(2\ell+1)$-out Neighborhood CV (NCV).}
+This is a pointwise variant to Buffered Block CV. NCV leaves out a local neighborhood around each index $t$:
+\[
+    J_t=\{t-\ell,\dots,t+\ell\},
+\]
+and fits the model on $\{1,\dots,n\}\setminus J_t$. The NCV estimate averages the loss over $t=1,\dots,n$:
+\[
+\widehat R_{\mathrm{NCV}}(\theta)
+=
+\frac{1}{n}\sum_{t=1}^n \left(y_t-\hat f_{\theta,\{1,\dots,n\}\setminus J_t}(x_t)\right)^2.
+\]
+This is statistically well aligned with the leakage mechanism in Claim~\ref{claim:bias}, but naive implementation requires many refits. Section~\ref{sec:ncv_computation} develops an efficient approach for penalized splines that makes NCV feasible inside hyperparameter tuning loops.
+
+
+
+
+\subsubsection{Walk-forward (Rolling-Origin) Validation.}
+
+Walk-forward validation mimics forecasting by ensuring the training set precedes the validation set. Fix an initial training endpoint $T_0$ and a validation horizon $H$. For step $j=0,1,\dots$ define
+\[
+T_j=\{1,\dots,T_0+jH\},
+\]
+\[
+V_j=\{T_0+jH+1,\dots,T_0+(j+1)H\},
+\]
+and compute the average squared loss over all steps.
+Because it never uses future information, walk-forward validation is appropriate when causality is required.
+

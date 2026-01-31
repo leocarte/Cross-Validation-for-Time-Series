@@ -1,0 +1,15 @@
+\section{Conclusion}
+
+
+Across both the synthetic experiments and the two real datasets, we find that randomized $K$-fold cross-validation is systematically unreliable under temporal dependence: it can produce overly optimistic error estimates and consequently select overly complex models (e.g., undersmoothing in kernel/spline regression or excessive complexity in boosted trees). Time-respecting alternatives substantially mitigate this effect. In practice, walk-forward validation is the most appropriate choice for forecasting objectives, while block and buffered/neighborhood-style schemes provide robust model selection for smoothing problems when autocorrelation (or seasonality) is present.
+
+
+
+
+
+\subsection{Limitations and Future Work}
+First, the simulation study focuses on short-to-medium range dependence; long-memory processes would further stress-test buffer design and may require alternative validation strategies. Second, we tune one primary complexity parameter per model family; jointly tuning multiple interacting parameters (particularly for boosted trees) could amplify the consequences of CV bias. Third, real datasets may exhibit structural breaks, time-varying volatility, or missingness mechanisms not captured by the simulation DGP; expanding the empirical study to a broader set of series and explicitly modeling these effects would strengthen generality.
+
+
+
+
