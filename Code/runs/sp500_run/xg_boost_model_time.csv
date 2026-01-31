@@ -1,0 +1,5 @@
+model,model_key,cv_scheme,replication,seed_train,seed_test,param_name,selected_param,cv_est_error,test_error,cv_time_seconds,dgp_n,f_id,error_model,error_params,cv_bias
+xg_boost,xg_boost,naive,0,140,917,max_depth,7.0,368.1551145342429,3716.7392767027054,0.42871594429016113,1785,real_data,real_data,{},-3348.5841621684626
+xg_boost,xg_boost,block,0,140,917,max_depth,2.0,26801.529195512063,4054.4169355786016,0.4219939708709717,1785,real_data,real_data,{},22747.112259933463
+xg_boost,xg_boost,block_buffered,0,140,917,max_depth,2.0,25775.83008220657,4753.0836833603535,0.4064209461212158,1785,real_data,real_data,{},21022.746398846215
+xg_boost,xg_boost,walk_forward,0,140,917,max_depth,7.0,11770.653594569541,4231.622691166408,0.4651200771331787,1785,real_data,real_data,{},7539.030903403133

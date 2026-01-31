@@ -1,0 +1,5 @@
+model,model_key,cv_scheme,replication,seed_train,seed_test,param_name,selected_param,cv_est_error,test_error,cv_time_seconds,dgp_n,f_id,error_model,error_params,cv_bias
+kernel,kernel,naive,0,140,917,h,0.2,0.6379205440872744,5.802270742358079,4.114412784576416,6906,real_data,real_data,{},-5.164350198270805
+kernel,kernel,block,0,140,917,h,178.51282051282053,2.081837734965232,1.8581093335309173,4.0342700481414795,6906,real_data,real_data,{},0.2237284014343146
+kernel,kernel,block_buffered,0,140,917,h,178.51282051282053,2.3600023683847975,1.8841689694771875,4.053343057632446,6906,real_data,real_data,{},0.47583339890761
+kernel,kernel,walk_forward,0,140,917,h,240.0,2.356467404486785,1.8325528034462821,1.7684202194213867,6906,real_data,real_data,{},0.5239146010405027
