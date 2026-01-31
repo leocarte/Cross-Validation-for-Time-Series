@@ -1,0 +1,369 @@
+%=============================================================================
+%================================TITLE========================================
+%=============================================================================
+
+
+
+
+\newcommand{\hmwkTitle}{Cross Validation for Time Series}
+
+
+%=============================================================================
+%================================TITLE========================================
+%=============================================================================
+
+\newcommand{\hmwkCode}{}
+\newcommand{\hmwkClass}{}
+\newcommand{\hmwkClassInstructor}{Preliminary Plan -- 21/11/2025}
+\newcommand{\hmwkAuthorName}{
+  \textbf{Leonardo Cartesegna - 408405} \\ 
+  \textbf{Filippo Reina - 416318} \\ 
+  \textbf{Dario Liuzzo - 408241}
+}
+
+
+%=============================================================================
+%=============================================================================
+%=============================================================================
+\documentclass{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage[letterpaper]{geometry} % For US Letter paper
+\usepackage{bm}
+\usepackage[makeroom]{cancel}
+\usepackage{enumitem}
+\usepackage{blkarray}
+\usepackage{mathrsfs}
+\usepackage{bbm}
+\bibliographystyle{plain}      % or another style like alpha, ieee, apa, etc.
+
+
+
+
+% Set default enumerate style to (a), (b), (c), ...
+\setlist[enumerate]{label=(\alph*)}
+
+
+
+
+\usepackage{etoolbox}
+\let\bbordermatrix\bordermatrix
+\patchcmd{\bbordermatrix}{8.75}{4.75}{}{}
+\patchcmd{\bbordermatrix}{\left(}{\left[}{}{}
+\patchcmd{\bbordermatrix}{\right)}{\right]}{}{}
+
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\rhead{\hmwkCode{} - \hmwkTitle}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Exercise \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Exercise \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Exercise \arabic{#1} (continued)}{Exercise \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Exercise \arabic{#1}}{}\nobreak{}\newpage
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[2][-1]{ % Add an additional argument for the title
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+        \setcounter{claim}{0}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter} (#2)} % Include the title in the section heading
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{\hfill$\square$
+    \exitProblemHeader{homeworkProblemCounter}\setcounter{claim}{0}
+}
+
+\newenvironment{homeworkProblem*}[1][-1]{ % Add an additional argument for the title
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+        \setcounter{claim}{5}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}} % Include the title in the section heading
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{\hfill$\square$
+    \exitProblemHeader{homeworkProblemCounter}\setcounter{claim}{0}
+}
+
+
+
+
+\usepackage{titletoc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tocloft}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % Dotted lines for sections
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}} % Dotted lines for subsections
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}} % Dotted lines for subsubsections
+
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable} % only what we need
+
+\newtheoremstyle{claimstyle}  % name
+  {9pt}   % Space above
+  {3pt}   % Space below
+  {\itshape} % Body font (<< this makes body bold)
+  {}      % Indent amount
+  {\bfseries} % Theorem head font
+  {.}     % Punctuation after theorem head
+  { }     % Space after theorem head
+  {}      % Theorem head spec
+
+\theoremstyle{claimstyle}
+\newtheorem{claim}{Claim}
+\newtheorem{problem}{Problem}
+\usepackage{needspace}   % already in your pre-amble
+\usepackage{etoolbox}
+
+% Reserve ¼ of the page before every \begin{problem}
+\AtBeginEnvironment{problem}{\Needspace{0.25\textheight}}
+
+
+
+
+% --- environment for proof body with vertical line ---
+\tcbset{
+  proofbody/.style={
+    enhanced,
+    breakable,
+    frame hidden,
+    borderline west={1pt}{0pt}{gray}, % vertical line on the left
+    colback=white,
+    boxrule=0pt,
+    left=6pt, right=0pt, top=2pt, bottom=2pt,
+    before upper={\setlength{\parskip}{1em}}, % <-- Add this line
+  }
+}
+
+
+\tcbset{
+  probody/.style={
+    enhanced,
+    breakable,
+    frame hidden,
+    borderline west={2pt}{1pt}{black}, % vertical line on the left
+    colback=white,
+    boxrule=6pt,
+    left=6pt, right=0pt, top=2pt, bottom=2pt,
+    before upper={\setlength{\parskip}{1em}}, % <-- Add this line
+  }
+}
+
+\newenvironment{claimproof}{\begin{tcolorbox}[proofbody]}{\end{tcolorbox}}
+\newenvironment{probproof}{\begin{tcolorbox}[probody, fontupper=\normalfont\rmfamily]}{\end{tcolorbox}\qed}
+
+%
+% Title Page
+%
+
+\title{\vspace{2in}
+\noindent\hrulefill\\
+    \textmd{\textbf{\hmwkTitle}}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor }}\\
+    \noindent\hrulefill
+    \vspace{3in}\\
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newenvironment{qs}
+  {\par\medskip\noindent\textbf{Question: } \itshape\ignorespaces}
+  {\par\medskip\normalfont\ignorespacesafterend}
+
+\newcommand{\sol}{\vspace{1em}\textbf{Answer:}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+\newcommand{\euro}{\text{\texteuro}}
+\newcommand{\qn}[1]{\qs{#1}}
+\newcommand{\ans}{\textbf{\textit{Answer: }}}
+\usepackage{booktabs} % For better-looking tables
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\mg}[1]{\boldsymbol{#1}}
+\usepackage{mathtools}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+
+
+
+\setlength{\parskip}{1em}
+
+
+
+
+\renewcommand{\P}{\mathbb{P}}
+
+
+
+\lhead{Statistical Computation \& Visualization}
+\rhead{MATH-517}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+\usepackage{hyperref}
+\usepackage[gen]{eurosym}
+
+
+
+
+
+
+
+
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Introduction and motivation}
+
+In many applications, data are collected over time or space and exhibit short-range dependence. 
+Examples include financial time series, environmental monitoring, or spatial measurements from sensor networks. 
+Standard cross-validation (CV) procedures such as random $k$-fold CV or leave-one-out CV (LOOCV) assume that the training and validation samples are independent. 
+When this assumption is violated, the validation and training sets contain highly correlated observations, which tends to underestimate prediction error and leads to overly complex (over-smoothed or under-smoothed) fits  (Chu and Maaron (1991)).
+
+The goal of this project is to study how different CV schemes behave in the presence of temporal (and possibly spatial) autocorrelation in a nonparametric regression setting. 
+We aim to compare ``naive'' CV procedures with several dependence-aware variants, and to understand in which situations each method provides reliable model selection and error estimation.
+
+\section*{Objectives}
+
+The project has three main objectives: to illustrate why standard CV procedures fail when data exhibit temporal or spatial dependence; to compare several modified CV schemes that account for autocorrelation when tuning nonparametric regression models; and to evaluate these methods both on synthetic data with controlled correlation structure and on real-world datasets.
+
+\section*{Methodology}
+
+To evaluate our CV schemes, we will explore three distinct non-parametric settings for estimating $f$:
+
+\begin{itemize}
+    \item \textbf{Penalized Splines:} Our primary classical estimator will be a smoothing spline (or penalized spline), where the amount of smoothing is controlled by a penalty parameter $\lambda$.
+    
+    \item \textbf{Kernel Regression:} As a second classical method, we will consider kernel regression, where the smoothness is controlled by the bandwidth $h$.
+    
+    \item \textbf{Gradient Boosted Trees (XGBoost):} To compare with a modern machine learning approach, our third setting will be an \texttt{XGBRegressor} model. Here the model's complexity (e.g., \texttt{max\_depth}) will be the key tuning parameter.
+\end{itemize}
+
+For each of the non-parametric settings, we plan to compare the following CV strategies for selecting the smoothing parameter:
+\begin{itemize}
+    \item \textbf{Naive CV baseline:} Random $k$-fold CV or LOOCV that ignores dependence. This serves as a benchmark to show the magnitude of the bias induced by autocorrelation.
+    
+    \item \textbf{Block CV:} The time series is partitioned into contiguous blocks, and block-wise $k$-fold CV is performed by leaving out entire blocks at a time.
+    
+    \item \textbf{Buffered CV (leave-$(2l+1)$-out):} This method removes a buffer of length $l$ around each validation point from the training data, 
+    reducing short-range dependence. When applying this scheme in the penalized spline setting, we will leverage the fast computational approximations from Wood (2024) to make 
+    hyperparameter optimization feasible.
+    
+    \item \textbf{Walk-forward (forward-chaining) CV:} Training is performed on past data and validated on future data, mimicking a forecasting setup.
+\end{itemize}
+
+For each method we will compare (i) the estimated prediction error, (ii) the smoothing parameter chosen by CV, and (iii) the resulting out-of-sample performance on an independent test set.
+
+\section*{Data and simulation design}
+
+We will start with synthetic data, where the true regression function $f$ and the dependence structure of the errors $\varepsilon_t$ are known. 
+Examples of processes we plan to consider include:
+\begin{itemize}
+    \item AR(1) errors with different autocorrelation levels (e.g.\ $\rho = 0.2, 0.5, 0.8$),
+    \item MA(1) errors with various parameters,
+    \item More complex processes ARIMA,
+    \item Processes with seasonal components.
+\end{itemize}
+This controlled setting will allow us to quantify bias in CV error estimates, and to examine how frequently each method chooses oversmoothed or undersmoothed fits.
+
+Afterwards, we will analyse several real-world datasets to assess the performance of the methods in practice. 
+Potential examples include:
+\begin{itemize}
+    \item financial time series, such as daily or intraday measures of stock volatility or returns;
+    \item environmental or climate time series, such as temperature or air pollution measurements from monitoring stations;
+    \item if time permits, a spatial dataset (e.g.\ air quality or precipitation observed at multiple locations), treated with appropriate spatial versions of the CV schemes.
+\end{itemize}
+For these datasets we will explore how the different CV methods affect the estimated smooth trend and predictive performance, and whether the conclusions from the simulation study carry over to real data.
+
+\section*{Expected outcomes}
+
+We expect to observe that naive CV strongly underestimates prediction error and selects overly flexible models when autocorrelation is strong, while block-based and neighbourhood-based methods provide more reliable smoothing parameter choices. 
+
+
+Moreover, we hope to identify practical guidelines for choosing CV schemes based on their performance in different settings.
+
+\end{document}
